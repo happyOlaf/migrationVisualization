@@ -42,6 +42,33 @@
         	width: 100px;
         	height: 30px;
         }
+        #Graphcontainer{
+        	position: absolute;
+        	width:800px;
+        	height: 680px;
+        	margin: 0 auto;
+        	background-color: white;
+        	position: relative; /*脱离文档流*/
+            top: 20px;
+            bottom: 20px
+        }
+        #leftcharts{
+        	position: absolute;
+        	top: 200px;
+        	width: 320px;
+        	height: 500px;
+        	border-radius: 10px;
+        	background-color: white;
+        }
+        #rightContainer{
+            position: absolute;
+            top: 20px;
+        	right:5px;
+        	width: 340px;
+        	height: 680px;
+        	border-radius: 10px;
+        	background-color: white;
+        }
 </style>
 </head>
 <body>
@@ -78,9 +105,17 @@
     <div style="margin-top: 10px;margin-bottom: 5px;">
     	<button type="button" id="submit" class="btn btn-warning" style="display:block;margin:0 auto">构建网络</button>
     </div>
+
+</div>
+    <div id="leftcharts"> 	
+    </div>
+    <div id="rightContainer">
+    	
+    </div>
+<div id="Graphcontainer">
 </div>
 <script type="text/javascript">
-	                var graphdata = {
+	            /*var graphdata = {
                     node:[],
                     links:[],
                 }
@@ -110,8 +145,23 @@
                         x: -53.873672,
                         y: 48.316376,
                 })
+                console.log(graphdata);*/
 
-                console.log(graphdata);
+	     function getData(country,year){
+	        //获取移入数据
+	        $.ajaxSettings.async = false; 
+	        http://localhost:8081/immigrantion/2005/Desc
+	        var url_in = "http://localhost:8081/immigration/" + year + "/" + country + "/Desc";
+	        $.getJSON(url_in, function (geojson) {
+	            road_in = geojson;
+	        });
+	        //获取移出数据
+	        $.ajaxSettings.async = false; 
+	        var url_out = 'http://localhost:8081/emigration/'+ year +'/' + country + '/Desc';
+	        $.getJSON(url_out, function (geojson) {
+	            road_out=geojson;
+	        })
+	     }
 </script>
 </body>
 </html>
