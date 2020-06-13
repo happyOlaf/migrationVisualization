@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>2019 Immigration policy changes in Europe, America and Australia</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
+<script src="assets/js/jquery-latest.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
+
+<style>
+	body { margin: 0; padding: 0; }
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<style>
+#map { 
+position: fixed;
+width: 50%;
+}
+#features {
+width: 50%;
+margin-left: 50%;
+font-family: sans-serif;
+overflow-y: scroll;
+background-color: #fafafa;
+}
+section {
+padding: 25px 50px;
+line-height: 25px;
+border-bottom: 1px solid #ddd;
+opacity: 0.25;
+font-size: 13px;
+}
+section.active {
+opacity: 1;
+}
+section:last-child {
+border-bottom: none;
+margin-bottom: 200px;
+}
+</style>
+
+ 
+<div id="map"></div>
+<script>
+	var title=[];
+	var contain=[];
+	var tem=[];
+	$.ajax({  
+        //请求方式  
+        type:"GET",
+        //离开ajax后变量能输出，true清空
+        async:false,  
+        //文件位置  
+        url:"http://127.0.0.1:8081/Policy/Month/Asc",
+        //返回数据格式为json,也可以是其他格式如  
+        dataType: "json",  
+        //请求成功后要执行的函数，拼接html  
+        success: function(data){
+            $.each(data,function(i,n){
+                title[i]=n.title;
+                contain[i]=n.contain;
+                tem['chapters'+i]={center:[n.lon,n.lat],zoom:n.zoom};
+            }); 
+        } 
+    });
+	// TO MAKE THE MAP APPEAR YOU MUST
+	// ADD YOUR ACCESS TOKEN FROM
+	// https://account.mapbox.com
+	mapboxgl.accessToken = 'pk.eyJ1IjoiMTgzODI0ZHl0IiwiYSI6ImNqbHExNDVjZzI0ZmUza2wxMDhocnlyem4ifQ.FZoJzmqTtli8hAvvAc1OPA';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/mapbox/streets-v11',
+center: tem['chapters0'].center,
+zoom: tem['chapters0'].zoom,
+// bearing: 27,
+// pitch: 45
+});
+var chapters=tem;
+ 
+// On every scroll event, check which element is on screen
+window.onscroll = function() {
+var chapterNames = Object.keys(chapters);
+for (var i = 0; i < chapterNames.length; i++) {
+var chapterName = chapterNames[i];
+if (isElementOnScreen(chapterName)) {
+setActiveChapter(chapterName);
+break;
+}
+}
+};
+ 
+var activeChapterName = 'chapters0';
+function setActiveChapter(chapterName) {
+if (chapterName === activeChapterName) return;
+ 
+map.flyTo(chapters[chapterName]);
+ 
+document.getElementById(chapterName).setAttribute('class', 'active');
+document.getElementById(activeChapterName).setAttribute('class', '');
+ 
+activeChapterName = chapterName;
+}
+ 
+function isElementOnScreen(id) {
+var element = document.getElementById(id);
+var bounds = element.getBoundingClientRect();
+return bounds.top < window.innerHeight && bounds.bottom > 0;
+}
+</script>
+<div id="features">
+	<script type="text/javascript">
+		$.each(title,function(i,n){
+                $("#features").append("<section id=\"chapters"+i+"\" class=\"active\"><h3>"+n+"</h3><p>"+contain[i]+"</p>");
+            }); 
+	</script>
+
+
+</div>
+
+
+
+ 
+</body>
+</html>
