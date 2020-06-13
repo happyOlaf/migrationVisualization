@@ -15,31 +15,32 @@
 </head>
 <body>
 <style>
-#map { 
-position: fixed;
-width: 50%;
-}
-#features {
-width: 50%;
-margin-left: 50%;
-font-family: sans-serif;
-overflow-y: scroll;
-background-color: #fafafa;
-}
-section {
-padding: 25px 50px;
-line-height: 25px;
-border-bottom: 1px solid #ddd;
-opacity: 0.25;
-font-size: 13px;
-}
-section.active {
-opacity: 1;
-}
-section:last-child {
-border-bottom: none;
-margin-bottom: 200px;
-}
+	#map { 
+	position: fixed;
+	width: 60%;
+	}
+	#features {
+	width: 40%;
+	margin-left: 60%;
+	font-family: sans-serif;
+	overflow-y: scroll;
+	background-color: #fafafa;
+	}
+	section {
+	padding: 25px 50px;
+	line-height: 25px;
+	border-bottom: 1px solid #ddd;
+	opacity: 0.25;
+	font-size: 13px;
+	text-align:justify;
+	}
+	section.active {
+	opacity: 1;
+	}
+	section:last-child {
+	border-bottom: none;
+	margin-bottom: 200px;
+	}
 </style>
 
  
@@ -86,44 +87,60 @@ margin-bottom: 200px;
 	// ADD YOUR ACCESS TOKEN FROM
 	// https://account.mapbox.com
 	mapboxgl.accessToken = 'pk.eyJ1IjoiMTgzODI0ZHl0IiwiYSI6ImNqbHExNDVjZzI0ZmUza2wxMDhocnlyem4ifQ.FZoJzmqTtli8hAvvAc1OPA';
-var map = new mapboxgl.Map({
-container: 'map',
-style: 'mapbox://styles/mapbox/streets-v11',
-center: tem['chapters0'].center,
-zoom: tem['chapters0'].zoom,
-// bearing: 27,
-// pitch: 45
-});
-var chapters=tem;
- 
+	var map = new mapboxgl.Map({
+	container: 'map',
+	style: 'mapbox://styles/mapbox/streets-v11',
+	center: tem['chapters0'].center,
+	zoom: tem['chapters0'].zoom,
+	// bearing: 27,
+	// pitch: 45
+	});
+	var chapters=tem;
+	/*var chapterNames = Object.keys(chapters);
+	var chapterName = chapterNames[0];
+	var marker = new mapboxgl.Marker()
+	.setLngLat(chapters[chapterName].center)
+	.addTo(map);*/
+	var marker = new mapboxgl.Marker()
+	var bounds;
 // On every scroll event, check which element is on screen
-window.onscroll = function() {
-var chapterNames = Object.keys(chapters);
-for (var i = 0; i < chapterNames.length; i++) {
-var chapterName = chapterNames[i];
-if (isElementOnScreen(chapterName)) {
-setActiveChapter(chapterName);
-break;
-}
-}
+	window.onscroll = function() {
+		var chapterNames = Object.keys(chapters);
+		for (var i = 0; i < chapterNames.length; i++) {
+			var chapterName = chapterNames[i];
+				if (isElementOnScreen(chapterName)) {
+					console.log(bounds.top);
+					console.log(window.innerHeight);
+					setActiveChapter(chapterName);
+					
+					marker
+					.setLngLat(chapters[chapterName].center)
+					.addTo(map);
+				
+				break;
+			}
+		}
 };
  
 var activeChapterName = 'chapters0';
 function setActiveChapter(chapterName) {
-if (chapterName === activeChapterName) return;
- 
-map.flyTo(chapters[chapterName]);
- 
-document.getElementById(chapterName).setAttribute('class', 'active');
-document.getElementById(activeChapterName).setAttribute('class', '');
- 
-activeChapterName = chapterName;
+	if (chapterName === activeChapterName) return;
+	 
+	map.flyTo(chapters[chapterName]);
+	console.log(chapters[chapterName].center);
+	//if(marker) marker.remove();
+	
+	document.getElementById(chapterName).setAttribute('class', 'active');
+	document.getElementById(activeChapterName).setAttribute('class', '');
+	marker.remove();//移出标记
+	activeChapterName = chapterName;
 }
  
 function isElementOnScreen(id) {
-var element = document.getElementById(id);
-var bounds = element.getBoundingClientRect();
-return bounds.top < window.innerHeight && bounds.bottom > 0;
+	var element = document.getElementById(id);
+	bounds = element.getBoundingClientRect();
+	
+	return bounds.top < window.innerHeight && bounds.top > 0 && bounds.bottom > 0;
 }
 </script>
 <div id="features">
