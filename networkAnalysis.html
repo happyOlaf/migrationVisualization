@@ -24,9 +24,20 @@
             position: absolute;
             width: 240px;
             top: 10px;
-            left: 10px;
+            left: 25px;
             border-radius: 10px;
             border: 1px solid;
+            border-color: #DCDCDC;
+            background-color: rgba(0,0,0,0.7);
+        }
+        #InforContainer{
+            position: absolute;
+            width: 240px;
+            top: 10px;
+            left: 280px;
+            border-radius: 10px;
+            border: 1px solid;
+            border-color: #DCDCDC;
             background-color: rgba(0,0,0,0.7);
         }
         #yearlist{
@@ -57,13 +68,30 @@
             top: 20px;
             bottom: 20px
         }
-        #leftcharts{
+
+        #leftcontainer{
         	position: absolute;
         	top: 160px;
-        	width: 380px;
-        	height: 500px;
+        	width: 400px;
+        	height: 550px;
         	border-radius: 10px;
-        	background-color: white;
+        	background-color: rgba(0,0,0,0.7);
+        }
+        #lefthead{
+            position:absolute;
+            width:320px;
+            height:30px;
+            margin-top: 10px;
+            font-size: 20px;
+            color:  #DCDCDC;
+            text-align: center;
+            font-weight: bold;
+        }
+        #leftcharts{
+        	position:absolute;
+            width:400px;
+            height:510px;
+            margin-top: 40px;
         }
         #rightContainer{
             position: absolute;
@@ -115,7 +143,10 @@
     </div>
 
 </div>
-    <div id="leftcharts"> 	
+    <div id="leftcontainer">
+            <div id="lefthead">Ranking of Edge Strength</div>
+            <div id="leftcharts">
+            </div>	
     </div>
     <div id="rightContainer">
     	<div id="rightchats1">
@@ -155,11 +186,17 @@
 	    var scatterdataSth_IN = [];
 		var scatterdataSth_Out = [];
 
+		var bardata = { // 定义排名柱状图
+           countryList: [],
+           countrydata: []
+     	}
 		//初始化绘图
 		getData(curyear);
         console.log(roaddata);
 	    buildGraph();
+	    Drawleftecharts(bardata);
 	    Drawrightcharts1();
+	    Drawrightcharts2();
 
         $("#yearlist").change(function(){
          	curyear = $(this).val();
@@ -167,7 +204,9 @@
          	getData(curyear);
 	        console.log(roaddata);
 		    buildGraph();
+		    Drawleftecharts(bardata);
 		    Drawrightcharts1();
+		    Drawrightcharts2();
          })
 
 
@@ -195,6 +234,7 @@
 		        console.log(roaddata);
 			    buildGraph();
 			    Drawrightcharts1();
+		    	Drawrightcharts2();
         	}
         }
 
@@ -226,6 +266,11 @@
 
 	        scatterdata_IN = [];
 			scatterdata_Out = [];
+			scatterdataSth_IN = [];
+		    scatterdataSth_Out = [];
+
+		    bardata.countryList=[];
+            bardata.countrydata=[];
 
 	        for(var i = 0; i < 232; i++){
 	        	countrylist[countryCode[i][0]] = 0;
@@ -237,6 +282,7 @@
 	            countrySthOut[countryCode[i][0]] = 0;
 	        }
 
+	        
 	        //度的统计 和 强度的统计
 	        for(var i = 0; i < roadNum; i++){
 	            countryIn[roaddata[i].to] += 1 ;
@@ -244,7 +290,17 @@
 
 	            countrySthIn[roaddata[i].to] += roaddata[i].count;
 	            countrySthOut[roaddata[i].from] += roaddata[i].count;
+
+	            //获取柱状图排序
+	            if (i < 100 ) {
+	                bardata.countryList.push(roaddata[i].from + '->' + roaddata[i].to);
+	            	bardata.countrydata.push(roaddata[i].count);
+	            }
+
 	        }
+	        console.log(bardata.countryList);
+	        console.log(bardata.countrydata);
+
 	        //出度和入度相加
 	        for(var i = 0; i < 232; i++){
 	            if (countryIn[countryCode[i][0]] > 0 ) {
@@ -394,7 +450,7 @@
 	        for (var i = 0; i < 4; i++) {
 	        	var color=['#B22222','#FF8C00','#48D1CC','	#EE82EE','#00FF7F']
 	            categories[i] = {
-	                name: 'group' + (i+1),
+	                name: 'Group' + (i+1),
 	                itemStyle: {
                     normal: {
                         color: color[i],
@@ -501,9 +557,9 @@
 
         function Drawrightcharts1(){
         	var rightchats1 = echarts.init(document.getElementById('rightchats1'));
-        	        	option = {
+        	  option = {
 			    title : {
-			        text: 'Degree distribution',
+			        text: 'Node Degree Distribution',
 			        textStyle:{
 			        	color:'#DCDCDC'
 			        }
@@ -600,11 +656,11 @@
 		                        type: 'solid',
 		                    }
 		                },
-		                name: 'degree',
+		                /*name: 'degree',
 		                nameLocation:'center',
 			            nameTextStyle:{
 			                    color: '#DCDCDC'
-			                }
+			                }*/
 			        	
 			        }
 			    ],
@@ -629,12 +685,11 @@
 			rightchats1.setOption(option);
         };
 
-        Drawrightcharts2()
         function Drawrightcharts2(){
         	var rightchats2 = echarts.init(document.getElementById('rightchats2'));
         	option = {
 			    title : {
-			        text: 'Strength distribution',
+			        text: 'Node Strength Distribution',
 			        textStyle:{
 			        	color:'#DCDCDC'
 			        }
@@ -739,11 +794,11 @@
 		                        type: 'solid',
 		                    }
 		                },
-		                name: 'Strength',
+		                /*name: 'Strength',
 		                nameLocation:'center',
 			            nameTextStyle:{
 			                    color: '#DCDCDC'
-			                }
+			                }*/
 			        	
 			        }
 			    ],
@@ -767,6 +822,154 @@
 			};
 			rightchats2.setOption(option);
         };
+    
+        function Drawleftecharts(datas){
+	        var leftcharts = echarts.init(document.getElementById('leftcharts'));
+	        // import echarts from 'echarts'
+	        var rankCtylist = datas.countryList;
+	        var rankCtydata = datas.countrydata;
+	        console.log(rankCtylist)
+	        var Len=rankCtydata.length;
+	        console.log(Len);
+	        //显示固定数量的国家
+	        var myend = 6;
+	        if( Len >= 6 ){
+	            myend =  (6 / Len) * 100; 
+	        } 
+	        console.log(myend)
+	        //根据状态确定颜色
+	        var color1 = 'rgba(255,99,71,0.5)'
+	        var color2 = 'rgba(255,99,71,1)';
+	        option = {
+	          title: {
+	            show: false
+	          },
+	          tooltip: {
+	            trigger: 'item'
+	          },
+	          dataZoom: [
+	                {
+	                    type: 'inside',
+	                    yAxisIndex: 0,
+	                    filterMode: 'empty',
+	                    start:0,
+	                    end:myend,
+	                    zoomOnMouseWheel:false,
+	                    moveOnMouseMove:true,
+	                    moveOnMouseWheel:true,
+	                },
+	                /*{
+	                    type: 'slider',
+	                    yAxisIndex: 0,
+	                    filterMode: 'empty',
+	                    zoomLock:true,
+	                },*/
+	            ],
+	          grid: {
+	            borderWidth: 0,
+	            top: '8%',
+	            left: '8%',
+	            right: '1%',
+	            bottom: '3%'
+	          },
+	          color: '#fff',
+	          yAxis: [{
+	            type: 'category',
+	            inverse: true,
+	            axisLine: {
+	              show: false
+	            },
+	            splitLine: {
+	              show: false
+	            },
+	            axisTick: {
+	              show: false
+	            },
+	            axisLabel: {
+	              show: false
+	            },
+	            data: rankCtylist
+	          }],
+	          xAxis: {
+	            type: 'value',
+	            axisTick: {
+	              show: false
+	            },
+	            axisLine: {
+	              show: false
+	            },
+	            splitLine: {
+	              show: false
+	            },
+	            axisLabel: {
+	              show: false
+	            }
+	          },
+	          series: [
+	            {
+	              name: '',
+	              type: 'bar',
+	              barWidth: '20px',
+	              itemStyle: {
+	                normal: {
+	                  show: true,
+	                  color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+	                    offset: 0,
+	                    color: color1,
+	                  }, {
+	                    offset: 1,
+	                    color: color2,
+	                  }], false),
+	                  barBorderRadius: 10
+	                },
+	                emphasis: {
+	                  shadowBlur: 15,
+	                  shadowColor: 'rgba(0, 0, 0, 0.1)'
+	                }
+	              },
+	              data: rankCtydata,
+	              animationDuration: 800,
+	              label: {
+	                normal: {
+	                  color: '#FFD700',
+	                  show: true,
+	                  position: 'bottom',
+	                  textStyle: {
+	                    fontSize: 12,
+	                    fontStyle: 'italic',
+	                    fontFamily: 'DINPro-Light'
+	                  }
+	                }
+	              }
+	            },
+	            {
+	              type: 'bar',
+	              barGap: '2px',
+	              barWidth: 2,
+	              animation: false,
+	              itemStyle: {
+	                // color: 'rgba(255,255,255,0.2)'
+	                color: 'transparent'
+	              },
+	              tooltip: {
+	                show: false
+	              },
+	              label: {
+	                show: true,
+	                position: ['0', '-80px'],
+	                fontSize: 12,
+	                color: '#DCDCDC',
+	                formatter: function (param) {
+	                  return param.name
+	                }
+	              },
+	              data: rankCtydata
+	            }
+	          ],
+	          animationEasing: 'cubicOut'
+	        }
+	        leftcharts.setOption(option);
+    	}
 </script>
 </body>
 </html>
