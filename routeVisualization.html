@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="assets/css/style.css"> <!-- Resource style -->
     <script src="assets/js/jquery-2.1.1.min.js"></script>
     <script src="assets/js/modernizr.js"></script> <!-- Modernizr -->
+    <script src="assets/js/main.js"></script> <!-- Resource jQuery -->
     <link rel="stylesheet" type="text/css" href="assets/css/switch-buttons.css">
 <style>
         body {
@@ -481,7 +482,8 @@
     });
     //获得国家坐标
     function getCountryCoods(cName){
-        for(var i = 0; i < countryCode.length; i++){           
+        for(var i = 0; i < countryCode.length; i++){
+            
             if( cName == countryCode[i][0]){
                 var coods = {"lng":0,"lat":0};
                 coods.lng = countryCode[i][4];
@@ -618,7 +620,7 @@
 
         });
 
-    //两侧滑动框控制
+            //两侧滑动框控制
     function toggleSidebar(id) {
         var elem = document.getElementById(id);
         var classes = elem.className.split(' ');
@@ -663,18 +665,17 @@
      //获取路线数据
      function getData(country,year){
         //获取移入数据
-            $.ajaxSettings.async = false; 
-            var url_in = "http://localhost:8081/immigration/" + year + "/" + country + "/Desc";
-            $.getJSON(url_in, function (geojson) {
-                road_in = geojson;
-            });
-            //获取移出数据
-            $.ajaxSettings.async = false; 
-            var url_out = 'http://localhost:8081/emigration/'+ year +'/' + country + '/Desc';
-            $.getJSON(url_out, function (geojson) {
-                road_out=geojson;
-                console.log(road_out);
-            })
+        $.ajaxSettings.async = false; 
+        var url_in = "http://localhost:8081/immigration/" + year + "/" + country + "/Desc";
+        $.getJSON(url_in, function (geojson) {
+            road_in = geojson;
+        });
+        //获取移出数据
+        $.ajaxSettings.async = false; 
+        var url_out = 'http://localhost:8081/emigration/'+ year +'/' + country + '/Desc';
+        $.getJSON(url_out, function (geojson) {
+            road_out=geojson;
+        })
      }
 
     //绘制路线图层（共有四点、线、面、动画四个图层）
@@ -869,6 +870,8 @@
     }
 
      getData(curCountry,curyear); 
+     // console.log(road_in);
+     // console.log(road_out);
      DrawRoad(road_out);
 
 
@@ -917,10 +920,6 @@
                 },
                 data: ytime,
                 type: 'category',
-                name: 'rank';
-                nameTextStyle:{
-                    color:
-                }
             },
             yAxis: {
                 axisLine: {
