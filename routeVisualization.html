@@ -500,13 +500,13 @@
         if($('.checked-switch').prop('checked')){
             status = "in";
             DrawRoad(road_in);
-            Drawleftecharts1(Ytotal_in);
+            Drawleftecharts1(total_In);
             Drawrightecharts(bardata_in)
         }
         else{
             status = "out";  
             DrawRoad(road_out);
-            Drawleftecharts1(Ytotal_out);
+            Drawleftecharts1(total_Out);
             Drawrightecharts(bardata_out)
         }
     });
@@ -523,7 +523,7 @@
         console.log(road_in);
         if (status == "in") { 
             DrawRoad(road_in); 
-            Drawleftecharts1(Ytotal_in);
+            Drawleftecharts1(total_In);
 
             //绘制右侧排名柱状图
             GetRankdata();
@@ -531,7 +531,7 @@
         }
         else { 
             DrawRoad(road_out); 
-            Drawleftecharts1(Ytotal_out);
+            Drawleftecharts1(total_Out);
             //绘制右侧排名柱状图
             GetRankdata();
             Drawrightecharts(bardata_out);
@@ -605,14 +605,14 @@
             //绘制路线图
             if (status == "in") { 
                 DrawRoad(road_in); 
-                Drawleftecharts1(Ytotal_in);
+                Drawleftecharts1(total_In);
                 //绘制右侧排名柱状图
                 GetRankdata();
                 Drawrightecharts(bardata_in);
             }
             else { 
                 DrawRoad(road_out); 
-                Drawleftecharts1(Ytotal_out);
+                Drawleftecharts1(total_Out);
                 //绘制右侧排名柱状图
                 GetRankdata();
                 Drawrightecharts(bardata_out);
@@ -662,6 +662,9 @@
            countrydata: []
      }
 
+     var total_In = [];
+     var total_Out = [];
+
      //获取路线数据
      function getData(country,year){
         //获取移入数据
@@ -675,6 +678,18 @@
         var url_out = 'http://localhost:8081/emigration/'+ year +'/' + country + '/Desc';
         $.getJSON(url_out, function (geojson) {
             road_out=geojson;
+        })
+
+        $.ajaxSettings.async = false; 
+        var url_out = 'http://localhost:8081/count/Country/' + country;
+        $.getJSON(url_out, function (geojson) {
+            var totaljson=geojson;
+            total_In = [];
+            total_Out = [];
+            for(var i = 0; i < geojson.length; i++){
+                total_In.push(geojson[i].desnum);
+                total_Out.push(geojson[i].orinum);
+            }
         })
      }
 
@@ -876,12 +891,9 @@
 
 
     //国家移民情况折线图
-    var Ytotal_in=[36000, 300000,400000,500000,600000,700000,800000];
-    var Ytotal_out=[300000, 200000,10000,200000,500000,700000,600000];
-    function GetTotaldata(country){
-
-    }
-    Drawleftecharts1(Ytotal_in);
+    /*var Ytotal_in=[36000, 300000,400000,500000,600000,700000,800000];
+    var Ytotal_out=[300000, 200000,10000,200000,500000,700000,600000];*/
+    Drawleftecharts1(total_Out);
     function Drawleftecharts1(datas){
         var leftcharts1 = echarts.init(document.getElementById('leftcharts1'));
         option = {
@@ -939,6 +951,15 @@
                     show: false
                 },
                 axisLabel:{  
+                    formatter: function(value,index){
+                        var value;
+                        if (value >=1000) {
+                            value = value/1000+'K';
+                        }else if(value <1000){
+                            value = value;
+                        }
+                        return value
+                    },
                     rotate:30,
                     textStyle: {
                         color: '#FFFF00'
@@ -1005,7 +1026,7 @@
         var Len=rankCtydata.length;
         console.log(Len);
         //显示固定数量的国家
-        var myend = 6;
+        var myend = 100;
         if( Len >= 6 ){
             myend =  (6 / Len) * 100; 
         } 
