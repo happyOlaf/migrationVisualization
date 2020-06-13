@@ -129,8 +129,13 @@ return bounds.top < window.innerHeight && bounds.bottom > 0;
 <div id="features">
 	<script type="text/javascript">
 		$.each(title,function(i,n){
-                $("#features").append("<section id=\"chapters"+i+"\" class=\"active\"><h3>"+n+"</h3><h4>"+Month[i]+",  "+Country[i]+"</h4><p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+contain[i]+"</p>");
-            }); 
+			if(i==0){
+            $("#features").append("<section id=\"chapters"+i+"\" class=\"active\"><h3>"+n+"</h3><h4>"+Month[i]+",  "+Country[i]+"</h4><p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+contain[i]+"</p>");
+        	}
+        	else{
+        		$("#features").append("<section id=\"chapters"+i+"\"><h3>"+n+"</h3><h4>"+Month[i]+",  "+Country[i]+"</h4><p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+contain[i]+"</p>");
+        	}
+        }); 
 	</script>
 	<section id="blank">
 		<p><br><br><br><br></p>
