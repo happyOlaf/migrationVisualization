@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Display HTML clusters with custom properties</title>
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css" rel="stylesheet" />
+	<script type="text/javascript" src="assets/mapboxgl/include-web.js"></script>
+	<script src="https://cdn.bootcdn.net/ajax/libs/echarts/4.7.0/echarts.min.js"></script>
+	<link rel="stylesheet" href="assets/css/style.css"> <!-- Resource style -->
+    <script src="assets/js/jquery-2.1.1.min.js"></script>
+    <script src="assets/js/modernizr.js"></script> <!-- Modernizr -->
+    <script src="assets/js/main.js"></script> <!-- Resource jQuery -->
+    <link rel="stylesheet" type="text/css" href="assets/css/switch-buttons.css">
+<style>
+	
+		body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        #SelContainer{
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        #countrylist{
+            width: 200px;
+        }
+
+
+        .flex-center {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+        }
+
+        .flex-center.left {
+            left: 0px;
+        }
+
+        .flex-center.right {
+            right: 0px;
+        }
+
+        .sidebar-content {
+            position: absolute;
+            width: 95%;
+            height: 95%;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 32px;
+            color: gray;
+        }
+
+        .sidbear-toggle {
+            position: absolute;
+            width: 1em;
+            height: 1em;
+            overflow: visible;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .sidbear-toggle.left {
+            right: -1.5em;
+        }
+
+        .sidbear-toggle.right {
+            left: -1.5em;
+        }
+
+        .sidbear-toggle:hover {
+            color: #0aa1cf;
+            cursor: pointer;
+        }
+
+        .sidebar {
+            top:120px;
+            transition: transform 0.5s;
+            z-index: 1;
+            width: 360px;
+            height: 620px;
+
+        }
+        .rounded-rect {
+            border-radius: 10px;
+            box-shadow: 0 0 50px -25px black;
+            border: 1px solid;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .left.collapsed {
+            transform: translateX(-355px);
+        }
+
+        .right.collapsed {
+            transform: translateX(355px);
+        }
+        #timecharts{
+            position:absolute;
+            width: 340px;
+            height: 50px;
+            margin-top: 60px;
+        }
+        #leftcharts1{
+            position: absolute;
+            margin-top: 35px;
+            width: 300px;
+            height: 320px;
+        }
+		#lefthead{
+            position:absolute;
+            width:320px;
+            height:30px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #FFD700;
+            text-align: center;
+            font-weight: bold;
+        }
+        #lefthead2{
+            position:absolute;
+            width:320px;
+            height:30px;
+            margin-top: 360px;
+            font-size: 14px;
+            color: #FFD700;
+            text-align: center;
+            font-weight: bold;
+        }
+        #leftcharts2{
+            position: absolute;
+            margin-top: 360px;
+            width: 340px;
+            height: 230px;
+        }
+
+        #righthead{
+            position:absolute;
+            width:320px;
+            height:30px;
+            margin-top: 10px;
+            font-size: 20px;
+            color:  #FFD700;
+            text-align: center;
+            font-weight: bold;
+        }
+        #Rightcharts1{
+            position:absolute;
+            width:340px;
+            height:520px;
+            margin-top: 50px;
+        }
+</style>
+</head>
+<body style=" margin: 0;overflow: hidden;background: #fff;width: 100%;height:100%">
+<div id="map"></div>
+<div id="SelContainer">
+    
+    <div style="float: left;">
+        <label class="switch-btn circle-style">
+            <input class="checked-switch" type="checkbox" />
+            <span class="text-switch" data-yes="Imi" data-no="Emi"></span> 
+            <span class="toggle-btn"></span> 
+        </label>
+    </div>
+</div>
+    <header>
+        <nav class="cd-stretchy-nav">
+            <a class="cd-nav-trigger" href="#0">
+                <span aria-hidden="true"></span>
+            </a>
+            <ul>
+                <li><a href="#0" class="active"><span>Home</span></a></li>
+                <li><a href="#0"><span>Portfolio</span></a></li>
+                <li><a href="#0"><span>Services</span></a></li>
+                <li><a href="#0"><span>Store</span></a></li>
+                <li><a href="#0"><span>Contact</span></a></li>
+            </ul>
+            <span aria-hidden="true" class="stretchy-nav-bg"></span>
+        </nav>
+    </header>
+</div>
+    <div id="timecharts" style="">      
+    </div>
+    <div id="left" class="sidebar flex-center left collapsed" style="">
+        <div class="sidebar-content rounded-rect flex-center">
+            <div id="leftArrow" class="sidbear-toggle rounded-rect left" onclick="toggleSidebar('left')">
+                &raquo;
+            </div>
+			<div id="lefthead">Emigrants to Different Continents</div>
+            <div id="leftcharts1">
+            </div>
+            <div id="lefthead2">Emigrants by World Bank Income Groups</div>
+            <div id="leftcharts2">
+            </div>
+        </div>
+    </div>
+    <div id="right" class="sidebar flex-center right collapsed">
+        <div class="sidebar-content rounded-rect flex-center">
+            <div class="sidbear-toggle rounded-rect right"
+                onclick="toggleSidebar('right')">
+                &laquo;
+            </div>
+            <!-- <div id="righthead">1990 年 中国 有 185 个移民目的国</div> -->
+			<div id="righthead">Ranking of Immigrants by Country in 1990</div>
+			
+            <div id="Rightcharts1">
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+//监听移入移出切换按钮的变化
+    $(".checked-switch").change(function(){
+        if($('.checked-switch').prop('checked')){
+            status = "in";
+			refreshstatus();
+			refresh();
+            //DrawRoad(road_in);
+            //Drawleftecharts1(Ytotal_in);
+			
+            Drawleftecharts1();
+			Drawrightecharts(bardata_in);
+			Drawleftecharts2();
+        }
+        else{
+            status = "out";
+			refreshstatus();
+			refresh();
+            //DrawRoad(road_out);
+            //Drawleftecharts1(Ytotal_out);
+            Drawleftecharts1();
+			Drawrightecharts(bardata_out);
+			Drawleftecharts2();
+        }
+    });
+
+
+	
+	//绘制时间轴
+       var timecharts = echarts.init(document.getElementById('timecharts'));
+       ytime=['1990','1995','2000','2005','2010','2015','2019'];
+       option = {
+           timeline: {
+               show: true,
+               axisType: 'category',
+               tooltip: {
+                   show: true,
+                   formatter: function(params) {
+                       console.log(params);
+                       return params.name + '月份数据统计';
+                   }
+               },
+               left:5 ,
+               right:5 ,
+               padding:0,
+               autoPlay: false,
+               currentIndex: 0,
+               playInterval: 2000,
+               label: {
+                   normal: {
+                       show: true,
+                       interval: 'auto',
+                       color: '#FFFF00',
+                   },
+               },
+               lineStyle: {
+                    color: '#red'
+                },
+               controlStyle: {
+                    showNextBtn: true,
+                    showPrevBtn: true,
+                    normal: {
+                        color: '#ff8800',
+                        borderColor: '#ff8800'
+                    },
+                    emphasis: {
+                        color: 'red',
+                        borderColor: 'red'
+                    }
+                },
+               data: ytime,
+           },
+       };
+       timecharts.setOption(option);
+   //监听时间轴变化
+    timecharts.on('timelinechanged', function (timeLineIndex) {
+            curyear = ytime[timeLineIndex.currentIndex];
+            
+            console.log(curyear)
+            //console.log(mystr);
+            //重新获取路线数据
+            getData(curyear);
+			getRankData(curyear);			
+			GetRankdata();
+            //重新绘制
+			refresh();
+            if (status == "in") { 
+                //DrawRoad(road_in); 
+                
+                //绘制右侧排名柱状图
+                Drawrightecharts(bardata_in);
+            }
+            else { 
+                //DrawRoad(road_out); 
+                
+                //绘制右侧排名柱状图
+                Drawrightecharts(bardata_out);
+                
+            }
+
+        });
+	
+    //两侧滑动框控制
+    function toggleSidebar(id) {
+        var elem = document.getElementById(id);
+        var classes = elem.className.split(' ');
+        var collapsed = classes.indexOf('collapsed') !== -1;
+
+        var padding = {};
+
+        if (collapsed) {
+            // Remove the 'collapsed' class from the class list of the element, this sets it back to the expanded state.
+            classes.splice(classes.indexOf('collapsed'), 1);
+            padding[id] = 300; // In px, matches the width of the sidebars set in .sidebar CSS class
+        } else {
+            padding[id] = 0;
+            // Add the 'collapsed' class to the class list of the element
+            classes.push('collapsed');
+        }
+
+        // Update the class list on the element
+        elem.className = classes.join(' ');
+    }
+
+
+</script>
+<script type="text/javascript">
+     var curCountry = "China";    //记录当前国家
+     var curyear = "1990";       //记录当前年份
+     var status = "out";        //记录当前移入移出状态  
+	 var openflag = 0;   //记录初次加载标记
+     //var mystr = 'assets/data/migrant_' + '1990' + '.json';
+	 var mystr = 'http://localhost:8081/Json/migrant/1990';//初始数据
+	 
+     
+     
+	 //获取排名数据
+	 var road_in = [];          //移入数据
+     var road_out = [];      //移出数据
+     var bardata_in = { // 按顺序排列从大到小
+          countryList: [],
+          countrydata: []
+     }
+     var bardata_out = { // 按顺序排列从大到小
+          countryList: [],
+           countrydata: []
+     }
+	 
+	 // filters for classifying earthquakes into five categories based on magnitude
+	
+	var mag1 = ['<', ['get', 'destnum'], 100000];
+	var mag2 = ['all', ['>=', ['get', 'destnum'], 100000], ['<', ['get', 'destnum'], 1000000]];//十万-百万
+	var mag3 = ['all', ['>=', ['get', 'destnum'], 1000000], ['<', ['get', 'destnum'], 5000000]];//百万-五百万
+	var mag4 = ['all', ['>=', ['get', 'destnum'], 1000000], ['<', ['get', 'destnum'], 10000000]];//百万-千万
+	var mag5 = ['>=', ['get', 'destnum'], 10000000];//千万以上
+	function refreshstatus(){
+		if(status == 'in'){ //移入
+		    mag1 = ['<', ['get', 'destnum'], 100000];
+		    mag2 = ['all', ['>=', ['get', 'destnum'], 100000], ['<', ['get', 'destnum'], 1000000]];//十万-百万
+		    mag3 = ['all', ['>=', ['get', 'destnum'], 1000000], ['<', ['get', 'destnum'], 5000000]];//百万-五百万
+		    mag4 = ['all', ['>=', ['get', 'destnum'], 1000000], ['<', ['get', 'destnum'], 10000000]];//百万-千万
+		    mag5 = ['>=', ['get', 'destnum'], 10000000];//千万以上
+		}
+		else{
+			mag1 = ['<', ['get', 'orignum'], 100000];
+			mag2 = ['all', ['>=', ['get', 'orignum'], 100000], ['<', ['get', 'orignum'], 1000000]];//十万-百万
+			mag3 = ['all', ['>=', ['get', 'orignum'], 1000000], ['<', ['get', 'orignum'], 5000000]];//百万-五百万
+			mag4 = ['all', ['>=', ['get', 'orignum'], 1000000], ['<', ['get', 'orignum'], 10000000]];//百万-千万
+			mag5 = ['>=', ['get', 'orignum'], 10000000];//千万以上
+		}
+    }
+    // colors to use for the categories
+    var colors = ['#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#B22222'];//#e31a1c#8B0000	
+
+    
+     
+</script>
+<script type="text/javascript">
+	mapboxgl.accessToken = 'pk.eyJ1Ijoic3VuaGhoIiwiYSI6ImNrOHYydDcxaDA2Y2QzZ3ByNHhxaHRwNnUifQ.EY5JFYPs7LPFTtv0kmBKvw';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        zoom: 2,
+		
+        center: [0, 20],
+        style: 'mapbox://styles/mapbox/dark-v10'
+		//style: 'mapbox://styles/sunhhh/ckb9geor40z7m1io3jpllvwrn'
+    });
+
+    map.addControl(new mapboxgl.NavigationControl());
+	
+</script>
+
+<script type="text/javascript">
+    
+	
+	function getData(year){
+		/*$.ajaxSettings.async = false; 
+        var url_in = "http://localhost:8081/immigration/" + year + "/" + country + "/Desc";
+        $.getJSON(url_in, function (geojson) {
+            road_in = geojson;
+        });
+        //获取移出数据
+        $.ajaxSettings.async = false; 
+        var url_out = 'http://localhost:8081/emigration/'+ year +'/' + country + '/Desc';
+        $.getJSON(url_out, function (geojson) {
+            road_out=geojson;
+        })*/
+		
+		$.ajax({  
+			//请求方式  
+			type:"GET",
+			//离开ajax后变量能输出，true清空
+			async:false,  
+			//文件位置  
+			//url:'assets/data/migrant_' + year + '.json',
+			url:'http://localhost:8081/Json/migrant/' + year,
+			//返回数据格式为json,也可以是其他格式如  
+			//dataType: "str",  
+			//请求成功后要执行的函数，拼接html  
+			success: function(data){
+				//返回数据格式为json值为Int调用方法
+				mystr = JSON.parse(data);
+				//mystr = data;
+				//alert('success')
+				console.log(mystr.features.length);
+			} 
+		});
+	}
+		
+	
+	
+	function refresh(){
+    
+		console.log(mystr);		
+		if (map.getLayer('migrant_circle')) map.removeLayer('migrant_circle');
+		if (map.getLayer('migrant_label')) map.removeLayer('migrant_label');
+		if (map.getSource('migrant')) map.removeSource('migrant');
+		
+        // add a clustered GeoJSON source for a sample set of earthquakes
+		if(openflag == 0){ //第一次打开加载
+		map.on('load', function () {
+			openflag = 1
+			map.addSource('migrant', {
+				'type': 'geojson',           
+				//'data': 'assets/data/migrant.json',
+				'data': mystr,
+				'cluster': true,
+				'clusterRadius': 70,
+				'clusterProperties': {
+					// keep separate counts for each magnitude category in a cluster
+					'mag1': ['+', ['case', mag1, 1, 0]],
+					'mag2': ['+', ['case', mag2, 1, 0]],
+					'mag3': ['+', ['case', mag3, 1, 0]],
+					'mag4': ['+', ['case', mag4, 1, 0]],
+					'mag5': ['+', ['case', mag5, 1, 0]]
+				}
+			});
+			
+			// circle and symbol layers for rendering individual earthquakes (unclustered points)
+			map.addLayer({		
+				'id': 'migrant_circle',
+				'type': 'circle',
+				'source': 'migrant',
+				'filter': ['!=', 'cluster', true],
+				
+				'paint': {
+					'circle-color': [
+						'case',
+						mag1,
+						colors[0],
+						mag2,
+						colors[1],
+						mag3,
+						colors[2],
+						mag4,
+						colors[3],
+						colors[4]
+					],
+					'circle-opacity':[
+						'case',
+						mag1,
+						0.8,
+						mag2,
+						0.8,
+						mag3,
+						0.8,
+						mag4,
+						0.8,
+						0.8
+					],
+					'circle-radius': [
+						'case',
+						mag1,
+						30,
+						mag2,
+						40,
+						mag3,
+						50,
+						mag4,
+						65,
+						90
+					]
+				}
+			});
+			//未聚类的图层
+			if (status == 'in'){
+				map.addLayer({			
+					'id': 'migrant_label',
+					'type': 'symbol',
+					'source': 'migrant',
+					'filter': ['!=', 'cluster', true],
+					'layout': {
+						'text-field': [
+							'number-format',
+							['get', 'destnum'],
+							{ 'min-fraction-digits': 0, 'max-fraction-digits': 0 }
+						],
+						'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+						'text-size': [
+							'case',
+							mag1,
+							15,
+							mag2,
+							15,
+							mag3,
+							20,
+							mag4,
+							25,
+							30
+						]
+					},
+					'paint': {
+						'text-color': [
+							'case',
+							['<', ['get', 'destnum'], 3],
+							'black',
+							'white'
+						]
+					}
+				});
+			}
+			else{
+				map.addLayer({			
+					'id': 'migrant_label',
+					'type': 'symbol',
+					'source': 'migrant',
+					'filter': ['!=', 'cluster', true],
+					'layout': {
+						'text-field': [
+							'number-format',
+							['get', 'orignum'],
+							{ 'min-fraction-digits': 0, 'max-fraction-digits': 0 }
+						],
+						'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+						'text-size': [
+							'case',
+							mag1,
+							15,
+							mag2,
+							15,
+							mag3,
+							20,
+							mag4,
+							25,
+							30
+						]
+					},
+					'paint': {
+						'text-color': [
+							'case',
+							['<', ['get', 'orignum'], 3],
+							'black',
+							'white'
+						]
+					}
+				});
+			}
+		  }
+		  )
+		}
+		else{
+			map.addSource('migrant', {
+				'type': 'geojson',           
+				//'data': 'assets/data/migrant.json',
+				'data': mystr,
+				'cluster': true,
+				'clusterRadius': 70,
+				'clusterProperties': {
+					// keep separate counts for each magnitude category in a cluster
+					'mag1': ['+', ['case', mag1, 1, 0]],
+					'mag2': ['+', ['case', mag2, 1, 0]],
+					'mag3': ['+', ['case', mag3, 1, 0]],
+					'mag4': ['+', ['case', mag4, 1, 0]],
+					'mag5': ['+', ['case', mag5, 1, 0]]
+				}
+			});
+			
+			// circle and symbol layers for rendering individual earthquakes (unclustered points)
+			map.addLayer({		
+				'id': 'migrant_circle',
+				'type': 'circle',
+				'source': 'migrant',
+				'filter': ['!=', 'cluster', true],
+				
+				'paint': {
+					'circle-color': [
+						'case',
+						mag1,
+						colors[0],
+						mag2,
+						colors[1],
+						mag3,
+						colors[2],
+						mag4,
+						colors[3],
+						colors[4]
+					],
+					'circle-opacity':[
+						'case',
+						mag1,
+						0.8,
+						mag2,
+						0.8,
+						mag3,
+						0.8,
+						mag4,
+						0.8,
+						0.8
+					],
+					'circle-radius': [
+						'case',
+						mag1,
+						30,
+						mag2,
+						40,
+						mag3,
+						50,
+						mag4,
+						65,
+						90
+					]
+				}
+			});
+			//未聚类的图层
+			if (status == 'in'){
+				map.addLayer({			
+					'id': 'migrant_label',
+					'type': 'symbol',
+					'source': 'migrant',
+					'filter': ['!=', 'cluster', true],
+					'layout': {
+						'text-field': [
+							'number-format',
+							['get', 'destnum'],
+							{ 'min-fraction-digits': 0, 'max-fraction-digits': 0 }
+						],
+						'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+						'text-size': [
+							'case',
+							mag1,
+							15,
+							mag2,
+							15,
+							mag3,
+							20,
+							mag4,
+							25,
+							30
+						]
+					},
+					'paint': {
+						'text-color': [
+							'case',
+							['<', ['get', 'destnum'], 3],
+							'black',
+							'white'
+						]
+					}
+				});
+			}
+			else{
+				map.addLayer({			
+					'id': 'migrant_label',
+					'type': 'symbol',
+					'source': 'migrant',
+					'filter': ['!=', 'cluster', true],
+					'layout': {
+						'text-field': [
+							'number-format',
+							['get', 'orignum'],
+							{ 'min-fraction-digits': 0, 'max-fraction-digits': 0 }
+						],
+						'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+						'text-size': [
+							'case',
+							mag1,
+							15,
+							mag2,
+							15,
+							mag3,
+							20,
+							mag4,
+							25,
+							30
+						]
+					},
+					'paint': {
+						'text-color': [
+							'case',
+							['<', ['get', 'orignum'], 3],
+							'black',
+							'white'
+						]
+					}
+				});
+			}
+		
+		
+		
+		
+		}
+		//点击未聚类对象移动
+		map.on('click', 'migrant_circle', function(e) {
+			var features = map.queryRenderedFeatures(e.point, {
+			layers: ['migrant_circle']
+			});
+			var clusterId = features[0].properties.cluster_id;
+			console.log(features[0].properties);
+			map.easeTo({
+					center: features[0].geometry.coordinates,
+					zoom: 3.5
+			});
+			/*map.getSource('earthquakes').getClusterExpansionZoom(
+			clusterId,
+			function(err, zoom) {
+				if (err) return;
+				 
+				map.easeTo({
+					center: features[0].geometry.coordinates,
+					zoom: zoom
+				});
+			}
+			);*/
+		});
+        // objects for caching and keeping track of HTML marker objects (for performance)
+        var markers = {};
+        var markersOnScreen = {};
+
+        function updateMarkers() {
+            var newMarkers = {};
+            var features = map.querySourceFeatures('migrant');
+
+            // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
+            // and add it to the map if it's not there already
+            for (var i = 0; i < features.length; i++) {
+                var coords = features[i].geometry.coordinates;
+                var props = features[i].properties;
+                if (!props.cluster) continue;
+                var id = props.cluster_id;
+
+                var marker = markers[id];
+                if (!marker) {
+                    var el = createDonutChart(props);
+                    marker = markers[id] = new mapboxgl.Marker({
+                        element: el
+                    }).setLngLat(coords);
+                }
+                newMarkers[id] = marker;
+
+                if (!markersOnScreen[id]) marker.addTo(map);
+            }
+            // for every marker we've added previously, remove those that are no longer visible
+            for (id in markersOnScreen) {
+                if (!newMarkers[id]) markersOnScreen[id].remove();
+            }
+            markersOnScreen = newMarkers;
+        }
+
+        // after the GeoJSON data is loaded, update markers on the screen and do so on every map move/moveend
+        map.on('data', function(e) {
+            if (e.sourceId !== 'migrant' || !e.isSourceLoaded) return;
+
+            map.on('move', updateMarkers);
+            map.on('moveend', updateMarkers);
+            updateMarkers();
+        });
+  
+	}
+	console.log(curyear);//初始化
+	getData(curyear);
+	getRankData(curyear);
+	refreshstatus();
+	refresh();
+	Drawleftecharts1();
+	Drawleftecharts2();
+    // code for creating an SVG donut chart from feature properties
+    function createDonutChart(props) {
+        var offsets = [];
+        var counts = [
+            props.mag1,
+            props.mag2,
+            props.mag3,
+            props.mag4,
+            props.mag5
+        ];
+        var total = 0;
+        for (var i = 0; i < counts.length; i++) {
+            offsets.push(total);
+            total += counts[i];
+        }
+        var fontSize =
+            total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
+        var r = total >= 100 ? 60 : total >= 50 ? 50 : total >= 10 ? 30 : 18;
+        var r0 = Math.round(r * 0.6);
+        var w = r * 2;
+
+        var html =
+            '<div><svg width="' +
+            w +
+            '" height="' +
+            w +
+            '" viewbox="0 0 ' +
+            w +
+            ' ' +
+            w +
+            '" text-anchor="middle" style="font: ' +
+            fontSize +
+            'px sans-serif; display: block">';
+
+        for (i = 0; i < counts.length; i++) {
+            html += donutSegment(
+                offsets[i] / total,
+                (offsets[i] + counts[i]) / total,
+                r,
+                r0,
+                colors[i]
+            );
+        }
+        html +=
+            '<circle cx="' +
+            r +
+            '" cy="' +
+            r +
+            '" r="' +
+            r0 +
+            '" fill="white" /><text dominant-baseline="central" transform="translate(' +
+            r +
+            ', ' +
+            r +
+            ')">' +
+            total.toLocaleString() +
+            '</text></svg></div>';
+
+        var el = document.createElement('div');
+        el.innerHTML = html;
+        return el.firstChild;
+    }
+
+    function donutSegment(start, end, r, r0, color) {
+        if (end - start === 1) end -= 0.00001;
+        var a0 = 2 * Math.PI * (start - 0.25);
+        var a1 = 2 * Math.PI * (end - 0.25);
+        var x0 = Math.cos(a0),
+            y0 = Math.sin(a0);
+        var x1 = Math.cos(a1),
+            y1 = Math.sin(a1);
+        var largeArc = end - start > 0.5 ? 1 : 0;
+
+        return [
+            '<path d="M',
+            r + r0 * x0,
+            r + r0 * y0,
+            'L',
+            r + r * x0,
+            r + r * y0,
+            'A',
+            r,
+            r,
+            0,
+            largeArc,
+            1,
+            r + r * x1,
+            r + r * y1,
+            'L',
+            r + r0 * x1,
+            r + r0 * y1,
+            'A',
+            r0,
+            r0,
+            0,
+            largeArc,
+            0,
+            r + r0 * x0,
+            r + r0 * y0,
+            '" fill="' + color + '" />'
+        ].join(' ');
+    }
+	function getRankData(year){//调用国家排名数据
+        //获取移入数据
+        $.ajaxSettings.async = false; 
+        var url_in = 'http://localhost:8081/count/' + year + '/des/Desc';
+		//var url_in = "http://localhost:8081/immigration/" + year + "/china/Desc";
+        $.getJSON(url_in, function (geojson) {
+            road_in = geojson;
+        });
+        //获取移出数据
+        $.ajaxSettings.async = false; 
+        var url_out = 'http://localhost:8081/count/'+ year + '/ori/Desc';
+		//var url_out = 'http://localhost:8081/emigration/'+ year +'/china/Desc';
+        $.getJSON(url_out, function (geojson) {
+            road_out = geojson;
+        })
+     }
+	//获取国家排名数据
+    function GetRankdata(){
+        bardata_in.countryList = road_in.map(function(m_data){
+            return m_data.contry;
+        });
+        bardata_in.countrydata = road_in.map(function(m_data){
+            return m_data.desnum;
+        });
+        bardata_out.countryList = road_out.map(function(m_data){
+            return m_data.contry;
+        });
+        bardata_out.countrydata = road_out.map(function(m_data){
+            return m_data.orinum;
+        });
+    }
+    GetRankdata();
+    Drawrightecharts(bardata_out);
+    //绘制右侧国家排名图
+    function Drawrightecharts(datas){
+        //var rightheadtext_in = curyear + " 年国家人口移入数量排序 " ;
+        //var rightheadtext_out = curyear + " 年国家人口移出数量排序 ";
+		var rightheadtext_in = 'Ranking of Immigrants by Country in ' + curyear;
+		var rightheadtext_out = 'Ranking of Emigrants by Country in ' + curyear;
+        if (status == "in") {
+             document.getElementById('righthead').innerHTML=rightheadtext_in;
+        }
+        if (status == "out") {
+             document.getElementById('righthead').innerHTML=rightheadtext_out;
+        }
+        var Rightcharts1 = echarts.init(document.getElementById('Rightcharts1'));//这边画左边的echarts图
+        // import echarts from 'echarts'
+        var rankCtylist = datas.countryList;
+        var rankCtydata = datas.countrydata;
+        var Len=rankCtydata.length;
+        console.log(Len);
+        //显示固定数量的国家
+        var myend = 6;
+        if( Len >= 6 ){
+            myend =  (6 / Len) * 100; 
+        } 
+        console.log(myend)
+        //根据状态确定颜色
+        var color1 = 'rgba(0,191,255,0.5)'
+        var color2 = 'rgba(0,191,255,1)';
+        if (status == "in") {
+            var color1 = 'rgba(0,250,154,0.5)';
+            var color2 = 'rgba(0,250,154,1)';
+        }
+        option = {
+          title: {
+            show: false
+          },
+          tooltip: {
+            trigger: 'item'
+          },
+          dataZoom: [
+                {
+                    type: 'inside',
+                    yAxisIndex: 0,
+                    filterMode: 'empty',
+                    start:0,
+                    end:myend,
+                    zoomOnMouseWheel:false,
+                    moveOnMouseMove:true,
+                    moveOnMouseWheel:true,
+                },
+                {
+                    type: 'slider',
+                    yAxisIndex: 0,
+                    filterMode: 'empty',
+                    zoomLock:true,
+                },
+            ],
+          grid: {
+            borderWidth: 0,
+            top: '8%',
+            left: '8%',
+            right: '8%',
+            bottom: '3%'
+          },
+          color: '#fff',
+          yAxis: [{
+            type: 'category',
+            inverse: true,
+            axisLine: {
+              show: false
+            },
+            splitLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              show: false
+            },
+            data: rankCtylist
+          }],
+          xAxis: {
+            type: 'value',
+            axisTick: {
+              show: false
+            },
+            axisLine: {
+              show: false
+            },
+            splitLine: {
+              show: false
+            },
+            axisLabel: {
+              show: false
+            }
+          },
+          series: [
+            {
+              name: '',
+              type: 'bar',
+              barWidth: '20px',
+              itemStyle: {
+                normal: {
+                  show: true,
+                  color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{
+                    offset: 0,
+                    color: color1,
+                  }, {
+                    offset: 1,
+                    color: color2,
+                  }], false),
+                  barBorderRadius: 10
+                },
+                emphasis: {
+                  shadowBlur: 15,
+                  shadowColor: 'rgba(0, 0, 0, 0.1)'
+                }
+              },
+              data: rankCtydata,
+              animationDuration: 800,
+              label: {
+                normal: {
+                  color: '#FFD700',
+                  show: true,
+                  position: 'bottom',
+                  textStyle: {
+                    fontSize: 12,
+                    fontStyle: 'italic',
+                    fontFamily: 'DINPro-Light'
+                  }
+                }
+              }
+            },
+            {
+              type: 'bar',
+              barGap: '2px',
+              barWidth: 2,
+              animation: false,
+              itemStyle: {
+                // color: 'rgba(255,255,255,0.2)'
+                color: 'transparent'
+              },
+              tooltip: {
+                show: false
+              },
+              label: {
+                show: true,
+                position: ['0', '-80px'],
+                fontSize: 12,
+                color: '#FFFF00',
+                formatter: function (param) {
+                  return param.name
+                }
+              },
+              data: rankCtydata
+            }
+          ],
+          animationEasing: 'cubicOut'
+        }
+
+        Rightcharts1.setOption(option);
+    }
+	
+	
+	
+
+		
+	function Drawleftecharts1(){
+		var leftheadtext_in = 'Immigrants to Different Continents';
+		var leftheadtext_out = 'Emigrants from Different Continents';
+        if (status == "in") {
+             document.getElementById('lefthead').innerHTML = leftheadtext_in;
+        }
+        if (status == "out") {
+             document.getElementById('lefthead').innerHTML = leftheadtext_out;
+        }
+		var rightcharts1 = echarts.init(document.getElementById('leftcharts1'));
+		var lineStyle = {
+			normal: {
+				width: 1,
+				opacity: 0.5
+			}
+		};
+        if(status == 'in'){
+			option = {
+				//backgroundColor: '#161627',			
+				/*title: {				
+						text: '',								
+						left: 'center',
+						textStyle: {
+							color: '#eee',
+							fontSize: 15,
+						}
+					},*/
+				tooltip: {},
+				legend: {
+					bottom: 0,
+					data: ['All', 'Male', 'Female'],
+					itemGap: 20,
+					textStyle: {
+						color: '#fff',
+						fontSize: 12
+					},
+					//selectedMode: 'single'
+				},			
+				radar: {
+					indicator: [
+						{name: 'Africa', max: 90000000},
+						{name: 'Asia', max: 90000000},
+						{name: 'Europe', max: 90000000},
+						{name: 'LAC', max: 90000000}, //拉丁美洲和加勒比地区
+						{name: 'NA', max: 90000000}, //北美
+						{name: 'Oceania', max: 90000000}
+					],
+					shape: 'circle',
+					splitNumber: 5,
+					name: {
+						textStyle: {
+							color: 'rgb(238, 197, 102)',
+							fontSize: 12
+						}
+					},
+					splitLine: {
+						lineStyle: {
+							color: [
+								'rgba(238, 197, 102, 0.1)', 'rgba(238, 197, 102, 0.2)',
+								'rgba(238, 197, 102, 0.4)', 'rgba(238, 197, 102, 0.6)',
+								'rgba(238, 197, 102, 0.8)', 'rgba(238, 197, 102, 1)'
+							].reverse()
+						}
+					},
+					splitArea: {
+						show: false
+					},
+					axisLine: {
+						lineStyle: {
+							color: 'rgba(238, 197, 102, 0.5)'
+						}
+					}
+				},
+				series: [
+					{
+						name: 'All',
+						type: 'radar',
+						lineStyle: lineStyle,
+						data: [
+							{
+								value: [15689666, 48209949, 49608231, 7161371, 27610408, 4731848],
+								name: '1990'
+							},
+							{
+								value: [16357077,46418044,53489829,6688710,33340948,5022287],
+								name: '1995'
+							},
+							{
+								value: [15051677,49394322,56858788,6570729,40351694,5361231],
+								name: '2000'
+							},
+							{	
+								value: [15969835,53439306,63594822, 7224942,45363257,6023412],
+								name: '2005'
+							},
+							{	
+								value: [17804198,	65938712,	70678025,	8262433,	50970861,	7127680],
+								name: '2010'
+							},
+							{
+								value: [23476251,	77231760,	75008219,	9441679,	55633443,	8069944],
+								name: '2015'
+							},
+							{	
+								value: [26529334,	83559197,	82304539,	11673288,	58647822,	8927925],
+								name: '2019'
+							}
+
+						
+						],
+						symbol: 'circle',
+						itemStyle: {
+							color: '#F9713C'
+						},
+						areaStyle: {
+							opacity: 0.1
+						}
+					},
+					{
+						name: 'Male',
+						type: 'radar',
+						lineStyle: lineStyle,
+						data: [
+							{
+								value: [8279127,	25757459,	24119388,	3592878,	13497226,	2415611],
+								name: '1990'
+							},
+							{
+								value: [8619901,	24869467,	25913001,	3346421,	16401865,	2535461],
+								name: '1995'
+							},
+							{
+								value: [7996691,	26592020,	27501320,	3278974,	19983823,	2676393],
+								name: '2000'
+							},
+							{	
+								value: [8666607,	29295776,	30775683,	3590334,	22544640,	2987798],
+								name: '2005'
+							},
+							{	
+								value: [9542242,	37818766,	34110740,	4106262,	24944560,	3539110],
+								name: '2010'
+							},
+							{
+								value: [12505720,	44702308,	35934501,	4721847,	26993701,	4005312],
+								name: '2015'
+							},
+							{	
+								value: [14060898,	48858845,	40007661,	5847136,	28288272,	4425192],
+								name: '2019'
+							}
+
+						
+						],
+						symbol: 'circle',
+						itemStyle: {
+							color: '#B3E4A1'
+						},
+						areaStyle: {
+							opacity: 0.05
+						}
+					},
+					{
+						name: 'Female',
+						type: 'radar',
+						lineStyle: lineStyle,
+						data: [
+							{
+								value: [7410539,	22452490,	25488843,	3568493,	14113182,	2316237],
+								name: '1990'
+							},
+							{
+								value: [7737176,	21548577,	27576828,	3342289,	16939083,	2486826],
+								name: '1995'
+							},
+							{
+								value: [7054986,	22802302,	29357468,	3291755,	20367871,	2684838],
+								name: '2000'
+							},
+							{	
+								value: [7303228,	24143530,	32819139,	3634608,	22818617,	3035614],
+								name: '2005'
+							},
+							{	
+								value: [8261956,	28119946,	36567285,	4156171,	26026301,	3588570],
+								name: '2010'
+							},
+							{
+								value: [10970531,	32529452,	39073718,	4719832,	28639742,	4064632],
+								name: '2015'
+							},
+							{	
+								value: [12468436,	34700352,	42296878,	5826152,	30359550,	4502733],
+								name: '2019'
+							}
+
+						
+						],
+						symbol: 'circle',
+						itemStyle: {
+							color: 'rgb(238, 197, 102)'
+						},
+						areaStyle: {
+							opacity: 0.05
+						}
+					}
+				]
+			};
+		}
+		else{
+			option = {
+				//backgroundColor: '#161627',							
+				tooltip: {},
+				legend: {
+					bottom: 0,
+					data: ['All', 'Male', 'Female'],
+					itemGap: 20,
+					textStyle: {
+						color: '#fff',
+						fontSize: 12
+					},
+					//selectedMode: 'single'
+				},			
+				radar: {
+					indicator: [
+						{name: 'Africa', max: 90000000},
+						{name: 'Asia', max: 90000000},
+						{name: 'Europe', max: 90000000},
+						{name: 'LAC', max: 90000000}, //拉丁美洲和加勒比地区
+						{name: 'NA', max: 90000000}, //北美
+						{name: 'Oceania', max: 90000000}
+					],
+					shape: 'circle',
+					splitNumber: 5,
+					name: {
+						textStyle: {
+							color: 'rgb(238, 197, 102)',
+							fontSize: 12
+						}
+					},
+					splitLine: {
+						lineStyle: {
+							color: [
+								'rgba(238, 197, 102, 0.1)', 'rgba(238, 197, 102, 0.2)',
+								'rgba(238, 197, 102, 0.4)', 'rgba(238, 197, 102, 0.6)',
+								'rgba(238, 197, 102, 0.8)', 'rgba(238, 197, 102, 1)'
+							].reverse()
+						}
+					},
+					splitArea: {
+						show: false
+					},
+					axisLine: {
+						lineStyle: {
+							color: 'rgba(238, 197, 102, 0.5)'
+						}
+					}
+				},
+				series: [
+					{
+						name: 'All',
+						type: 'radar',
+						lineStyle: lineStyle,
+						data: [
+							{
+								value: [20313249, 56776002, 47958403, 15356173, 2815144, 964381],
+								name: '1990'
+							},
+							{
+								value: [22004584, 58467667, 48838192, 19332761, 2932225, 1071336],
+								name: '1995'
+							},
+							{
+								value: [21572998, 64668744, 49791000, 24328050, 3142132, 1245673],
+								name: '2000'
+							},
+							{	
+								value: [24268143, 72292746, 52138483, 28827515, 3500523, 1388616],
+								name: '2005'
+							},
+							{	
+								value: [27992754, 88008362, 56466487, 33630163, 3983617, 1591009],
+								name: '2010'
+							},
+							{
+								value: [32600127, 99760326, 59609369, 35790162, 4344866, 1811842],
+								name: '2015'
+							},
+							{	
+								value: [38738780, 112911740, 61489552, 39790038, 4267907, 1890509],
+								name: '2019'
+							}
+
+						
+						],
+						symbol: 'circle',
+						itemStyle: {
+							color: '#F9713C'
+						},
+						areaStyle: {
+							opacity: 0.1
+						}
+					},
+					{
+						name: 'Male',
+						type: 'radar',
+						lineStyle: lineStyle,
+						data: [
+							{
+								value: [10907166,	30048055,	22907006,	7572670,	1271423,	470430],
+								name: '1990'
+							},
+							{
+								value: [11736103,	30790420,	23149365,	9320097,	1311287,	517481],
+								name: '1995'
+							},
+							{
+								value: [11477548,	34036035,	23463243,	11799106,	1413083,	601402],
+								name: '2000'
+							},
+							{	
+								value: [12793465,	38437731,	24909717,	13956613,	1609938,	676619],
+								name: '2005'
+							},
+							{	
+								value: [14796836,	48447246,	27233148,	15825162,	1849752,	788601],
+								name: '2010'
+							},
+							{
+								value: [16224658,	53566507,	29155969,	17048299,	2172945,	914907],
+								name: '2015'
+							},
+							{	
+								value: [20259927,	62992808,	28976845,	19167428,	1983251,	930322],
+								name: '2019'
+							}
+
+						
+						],
+						symbol: 'circle',
+						itemStyle: {
+							color: '#B3E4A1'
+						},
+						areaStyle: {
+							opacity: 0.05
+						}
+					},
+					{
+						name: 'Female',
+						type: 'radar',
+						lineStyle: lineStyle,
+						data: [
+							{
+								value: [9406083,	26727947,	25051397,	7783503,	1543721,	493951],
+								name: '1990'
+							},
+							{
+								value: [10268481,	27677247,	25688827,	10012664,	1620938,	553855],
+								name: '1995'
+							},
+							{
+								value: [10095450,	30632709,	26327757,	12528944,	1729049,	644271],
+								name: '2000'
+							},
+							{	
+								value: [11474678,	33855015,	27228766,	14870902,	1890585,	711997],
+								name: '2005'
+							},
+							{	
+								value: [13195918,	39561116,	29233339,	17805001,	2133865,	802408],
+								name: '2010'
+							},
+							{
+								value: [16375469,	46193819,	30453400,	18741863,	2171921,	896935],
+								name: '2015'
+							},
+							{	
+								value: [18478853,	49918932,	32512707,	20622610,	2284656,	960187],
+								name: '2019'
+							}
+
+						
+						],
+						symbol: 'circle',
+						itemStyle: {
+							color: 'rgb(238, 197, 102)'
+						},
+						areaStyle: {
+							opacity: 0.05
+						}
+					}
+				]
+			};
+		
+		
+		
+		
+		}
+		rightcharts1.setOption(option);
+	}
+	function Drawleftecharts2(){
+		var leftheadtext_in = 'Immigrants by World Bank Income Groups';
+		var leftheadtext_out = 'Emigrants by World Bank Income Groups';
+        if (status == "in") {
+             document.getElementById('lefthead2').innerHTML = leftheadtext_in;
+        }
+        if (status == "out") {
+             document.getElementById('lefthead2').innerHTML = leftheadtext_out;
+        }
+		var rightcharts2 = echarts.init(document.getElementById('leftcharts2'));
+			
+			if(status == 'in'){
+				option = {
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+						type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+					}
+				},
+				legend: {
+					data: ['HighIncome', 'MidIncome', 'LowIncome'],
+					bottom: 180,				
+					itemGap: 10,
+					textStyle: {
+						color: '#fff',
+						fontSize: 12
+					},
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true,
+					nameTextStyle: {
+						color: '#000',
+						fontSize: 12
+					},
+					
+				},
+				xAxis: {
+					type: 'value',
+					axisLabel: {
+						rotate:30,
+						textStyle: {
+							color: '#FFF',
+							fontSize: 8
+						}
+						
+						
+					},
+				},
+				yAxis: {
+					type: 'category',
+					data: ['1990', '1995', '2000', '2005', '2010', '2015', '2019'],
+					
+					axisLabel: {
+						
+						textStyle: {
+							color: '#FFF',
+							fontSize: 12
+						}
+						
+						
+					},
+				},
+				series: [
+					{
+						name: 'HighIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						//barWidth: 5,
+						data: [77802868,	89346612,	103029727,	120543730,	144282576,	160366582,	175811829]
+					},
+					{
+						name: 'MidIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						data: [65124366,	61040029,	61158978,	61623367,	65980003,	76123099,	82237681]
+					},
+					{
+						name: 'LowIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						data: [9790238,	10577086,	8975609,	8969212,	10040501,	11869725,	13072099]
+					}
+					/*33866033, 88372330, 21292572
+					35178612, 97323763, 19392843
+					37249840, 107661584, 18973428
+					39937217, 122066230, 19419889
+					44449042, 143044467, 23130631
+					47927311, 155239025, 29629367
+					49217610, 170409368, 39136450高中低*/
+				
+				]
+			  }
+			}
+			else{
+				option = {
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+						type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+					}
+				},
+				legend: {
+					data: ['HighIncome', 'MidIncome', 'LowIncome'],
+					bottom: 180,				
+					itemGap: 10,
+					textStyle: {
+						color: '#fff',
+						fontSize: 12
+					},
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true,
+					nameTextStyle: {
+						color: '#000',
+						fontSize: 12
+					},
+					
+				},
+				xAxis: {
+					type: 'value',
+					axisLabel: {
+						rotate:30,
+						textStyle: {
+							color: '#FFF',
+							fontSize: 8
+						}
+						
+						
+					},
+				},
+				yAxis: {
+					type: 'category',
+					data: ['1990', '1995', '2000', '2005', '2010', '2015', '2019'],
+					
+					axisLabel: {
+						
+						textStyle: {
+							color: '#FFF',
+							fontSize: 12
+						}
+						
+						
+					},
+				},
+				series: [
+					{
+						name: 'HighIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						//barWidth: 5,
+						data: [33866033,35178612,37249840,39937217,44449042,47927311,49217610]
+				       
+						
+					},
+					{
+						name: 'MidIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						data: [88372330, 97323763, 107661584,122066230,143044467, 155239025,170409368]
+					       
+					},
+					{
+						name: 'LowIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						data: [21292572,19392843,18973428,19419889,23130631,29629367,39136450]
+		        
+					}           
+					
+				]
+			
+			
+			
+			
+			
+			  }
+		    };
+		rightcharts2.setOption(option);
+	}
+</script>
+
+</body>
+</html>
