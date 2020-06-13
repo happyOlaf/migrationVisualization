@@ -1,0 +1,607 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head>
+    <meta charset="utf-8" />
+    <title>疫情可视化</title> 
+    <script src="assets/js/jquery-3.4.1.js"></script>
+    <script src="assets/js/echarts.min.js"></script>
+	<script src="assets/js/world.js"></script>
+	
+	
+</head>
+
+<body>       
+	<div id="main01" style="width: 1000px;height:530px;"></div>
+	<div id="main02" style="width: 1000px;height:180px;"></div>
+	<div style="position:absolute;top:20px;right:5px;width: 500px;height:700px;border-radius: 10px;background-color: rgb(0,0,0,,0.7);">
+		<div id="main03"style="width: 500px;height:360px;border-radius: 10px;background-color: rgb(0,0,0,,0.7);"></div>
+		<div id="main04"style="width: 500px;height:340px;border-radius: 10px;background-color: rgb(0,0,0,,0.7);"></div>
+	</div>
+    <script type="text/javascript">
+    	var years = ['2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020'];
+    	var area = [];
+    	var migration = [];
+    	var area_en = [];
+
+		for(ii=0;ii<years.length;ii++){
+			area[ii] = new Array();
+			migration[ii] = new Array();
+			area_en[ii] = new Array();
+			$.ajax({  
+                //请求方式  
+                type:"GET",
+                //离开ajax后变量能输出，true清空
+                async:false,  
+                //文件位置  
+                url:"http://localhost:8081/Trend/geoMap/"+years[ii]+'/Migration/Asc',
+
+                //返回数据格式为json,也可以是其他格式如  
+                dataType: "json",  
+                //请求成功后要执行的函数，拼接html  
+                success: function(data){
+                    //返回值为List调用方法,List(MissingProvince,Number)
+                    $.each(data,function(i,n){                   	
+                        area[ii][i]=n.area;
+                        migration[ii][i]=n.migration;
+                        area_en[ii][i]=n.area_en;
+                        if(area_en[ii][i]=='Republic of Congo)'){//国家英文名与js文件对不上，修改这部分国家的英文名
+                        	area_en[ii][i] = 'Congo';
+                        }
+                        if(area_en[ii][i]=='South Sudan'){
+                        	area_en[ii][i] = 'S. Sudan';
+                        }
+                        if(area_en[ii][i]=='Central African Republic'){
+                        	area_en[ii][i] = 'Central African Rep.';
+                        }
+                        if(area_en[ii][i]=='Congo (DRC)'){
+                        	area_en[ii][i] = 'Dem. Rep. Congo';
+                        }
+                        if(area_en[ii][i]=='Western Sahara'){
+                        	area_en[ii][i] = 'W. Sahara';
+                        }
+                        if(area_en[ii][i]=='new Zealand'){
+                        	area_en[ii][i] = 'New Zealand';
+                        }
+                        if(area_en[ii][i]=='North Korea'){
+                        	area_en[ii][i] = 'Dem. Rep. Korea';
+                        }
+                        if(area_en[ii][i]=='Laos'){
+                        	area_en[ii][i] = 'Lao PDR';
+                        }
+                        if(area_en[ii][i]=='Czech Republic'){
+                        	area_en[ii][i] = 'Czech Rep.';
+                        }
+                        if(area_en[ii][i]=='North Macedonia'){
+                        	area_en[ii][i] = 'Macedonia';
+                        }
+                        if(area_en[ii][i]=='Bosnia and Herzegovina'){
+                        	area_en[ii][i] = 'Bosnia and Herz.';
+                        }
+                        if(area_en[ii][i]=='Costa rica'){
+                        	area_en[ii][i] = 'Costa Rica';
+                        }
+                        if(area_en[ii][i]=='Dominican Republic'){
+                        	area_en[ii][i] = 'Dominican Rep.';
+                        }
+                        if(area_en[ii][i]=='Equatorial Guinea'){
+                        	area_en[ii][i] = 'Eq. Guinea';
+                        }
+                    });
+
+                } 
+
+            });
+
+		}
+		var myChart = echarts.init(document.getElementById('main01')); //图例
+		var myChart2 = echarts.init(document.getElementById('main02')); //折线图
+		var myChart3 = echarts.init(document.getElementById('main03')); //热门词
+		var myChart4 = echarts.init(document.getElementById('main04')); //飙升词
+		            option = {//地图
+		                baseOption: {
+		                    timeline: {
+		                        axisType: 'category',
+		                        // realtime: false,
+		                        // loop: false,
+		                        autoPlay: true,
+		                        playInterval: 2000,
+		                        symbolSize: 12,
+		                        left: '3%',
+		                        right: '10%',
+		                        bottom: '0%',
+		                        width: '95%',
+		                        // controlStyle: {
+		                        //     position: 'left'
+		                        // },
+		                        data: years,
+		                        tooltip: {
+		                            formatter: years
+		                        },
+		                    },
+
+		                    tooltip: {
+		                        show: true,
+		                        trigger: 'item'
+		                    },
+		                    visualMap: {
+		                        type: 'piecewise',
+		                        pieces: [
+		                            {
+		                                min: 81,
+		                                max: 100,
+		                                color: '#EE2C2C'
+		                            },
+		                            {
+		                                min: 61,
+		                                max: 80,
+		                                color: '#EE7600'
+		                            },
+		                            {
+		                                min: 41,
+		                                max: 60,
+		                                color: '#FF8C00'
+		                            },
+		                            {
+		                                min: 21,
+		                                max: 40,
+		                                color: '#FFD700'
+		                            },
+		                            {
+		                                min: 1,
+		                                max: 20,
+		                                color: '#FFEC8B'
+		                            },
+		                            {
+		                                value: 0,
+		                                color: 'white'
+		                            }
+
+		                        ],
+		                        orient: 'vertical',
+		                        itemWidth: 20,
+		                        itemHeight: 10,
+		                        showLabel: true,
+		                        seriesIndex: [0],
+
+		                        textStyle: {
+		                            fontSize: 10,
+									color: '#7B93A7'
+									
+		                        },
+		                        bottom: '10%',
+		                        right: "1%",
+		                    },
+		                    grid: {  // 修改bar的位置
+		                        left: '11%',
+		                        top: '45%',
+		                        bottom: '10%',
+		                        width: '10%'
+		                    },
+		                    xAxis: {
+		                        min: 0,
+		                        max: 100,
+		                        show: false
+		                    },
+		                    yAxis: [{
+		                        inverse: true,
+		                        offset: '2',
+		                        'type': 'category',
+		                        data: '',
+		                        nameTextStyle: {
+		                            color: '#fff'
+		                        },
+		                        axisTick: {
+		                            show: false,
+		                        },
+		                        axisLabel: {
+		                            //rotate:45,
+		                            textStyle: {
+		                                fontSize: 10,
+		                                color: '#000000',
+		                            },
+		                            interval: 0
+		                        },
+		                        axisLine: {
+		                            show: false,
+		                            lineStyle: {
+		                                color: '#333'
+		                            },
+		                        },
+		                        splitLine: {
+		                            show: false,
+		                            lineStyle: {
+		                                color: '#333'
+		                            }
+		                        },
+		                    }],
+		                    geo: {  <!-- 地图的位置 -->
+		                        map: 'world',
+		                        right: '8%',
+		                        left: '12%',
+								top: '10%',
+								//bottom: '1%',
+		                        label: {
+		                            emphasis: {
+		                                show: false,
+		                            }
+		                        },
+		                        itemStyle: {
+		                            emphasis: {
+		                                areaColor: '#FFD700'
+		                            }
+		                        }
+		                    },
+		                    series: [{
+		                            name: 'Heat of migration',
+		                            type: 'map',
+		                            map: 'world',
+		                            roam: false,
+		                            geoIndex: 0,
+									//right: '6%',
+									//left: '20%',
+		                            label: {
+		                                show: false,
+		                            },
+		                        },
+		                        {
+		                            'name': '',
+		                            'type': 'bar',
+		                            zlevel: 2,
+		                            barWidth: '40%',
+									//right: '6%',
+									//left: '20%',
+		                            label: {
+		                                normal: {
+		                                    show: true,
+		                                    fontSize: 14,
+		                                    position: 'right',
+		                                    formatter: '{c}'
+		                                }
+		                            },
+		                        }
+		                    ],
+
+		                },
+		                animationDurationUpdate: 3000,
+		                animationEasingUpdate: 'quinticInOut',
+		                options: []
+		            };
+
+					var days_num = [];
+					var days = [];
+					var topwords = [];
+					var top_num = [];
+					var risingwords = [];
+					var rising_num = [];	
+					DrawLine('2006');
+					DrawPie('2006');
+					myChart.on('timelinechanged', function (timeLineIndex) {
+						curyday = years[timeLineIndex.currentIndex];
+						DrawLine(curyday);
+						DrawPie(curyday);
+					});
+					function DrawLine(curyear){
+						$.ajax({  
+			                //请求方式  
+			                type:"GET",
+			                //离开ajax后变量能输出，true清空
+			                async:false,  
+			                //文件位置  
+			                url:"http://localhost:8081/Trend/multiTimeline/"+curyear,
+
+			                //返回数据格式为json,也可以是其他格式如  
+			                dataType: "json",  
+			                //请求成功后要执行的函数，拼接html  
+			                success: function(data){
+			                    //返回值为List调用方法,List(MissingProvince,Number)
+			                    $.each(data,function(i,n){                   	
+			                        days[i]=n.time;
+			                        days_num[i]=n.num;
+			                    });
+
+			                } 
+
+			            });
+						var option2 = {
+						            title:{
+						                text: curyear+' Global total heat of migration'
+						            },
+						              tooltip: {
+					                    trigger: 'axis', // hover触发器
+					                    axisPointer: { // 坐标轴指示器，坐标轴触发有效
+					                        type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
+					                        shadowStyle: {
+					                            color: 'rgba(150,150,150,0.1)' //hover颜色
+					                        }
+					                    }
+					                },
+						            legend:{
+						                data:'Global total heat of migration',
+						                x: 'right',
+						                y: 'top'
+						            }, 
+						            toolbox: {
+								        show: true,
+								        feature: {
+								            mark: {
+								                show: true
+								            },
+								            dataView: {
+								                show: true,
+								                readOnly: false
+								            },
+								            magicType: {
+								                show: true,
+								                type: ['line', 'bar']
+								            },
+								            restore: {
+								                show: true
+								            },
+								            saveAsImage: {
+								                show: true
+								            }
+								        }
+								    },
+						            xAxis:{
+						                data:days
+						            },
+						            yAxis:{},
+						            grid: {
+										left: '2%',
+										right: '2%',
+										bottom: '3%',
+										containLabel: true
+									},
+						            series:[
+						                {
+						                    name:'Heat of migration',
+						                    type:'line',
+						                    itemStyle:{
+						                        normal:{ color: "#c3f" } //坐标圆点的颜色
+						                    },
+						                    lineStyle:{
+						                        normal:{ width:2,color: "#c3f"  }//线条的颜色及宽度
+						                    },
+						                    smooth: true,//线条平滑
+						                    //data为每年apple的数量
+						                    data: days_num
+						                    // itemStyle : { normal: {label : {show: true}}}
+						                },
+						                
+						            ]
+						        };
+						        myChart2.setOption(option2);
+						}
+
+						function DrawPie(curyear){
+							$.ajax({  
+				                //请求方式  
+				                type:"GET",
+				                //离开ajax后变量能输出，true清空
+				                async:false,  
+				                //文件位置  
+				                url:"http://localhost:8081/Trend/relatedQueries/"+curyear,
+
+				                //返回数据格式为json,也可以是其他格式如  
+				                dataType: "json",  
+				                //请求成功后要执行的函数，拼接html  
+				                success: function(data){
+				                    //返回值为List调用方法,List(MissingProvince,Number)
+				                    $.each(data,function(i,n){                   	
+				                        topwords[i]=n.top;
+				                        top_num[i]=n.num1;
+				                        risingwords[i]=n.rising;
+				                        rising_num[i]=n.num2;
+				                    });
+
+				                } 
+
+				            });
+				            var data3=[];
+				            var data4=[];
+				            for(jj=0;jj<topwords.length;jj++){
+				            	data3.push({
+				            		value:top_num[jj],
+				            		name:topwords[jj]
+				            		
+				            	});
+				            	data4.push({
+				            		value:rising_num[jj],
+				            		name:risingwords[jj]
+				            	});
+				            }
+
+				            option3 = {
+							    backgroundColor:'#ffffff',
+							    title:{
+							        text:"Related queries —— Popular",
+							        left:'center',
+							        top:'5%',
+							        textStyle:{
+							            color:"#333",
+							            fontSize:15,
+							            
+							        }
+							    },
+							     tooltip : {
+							        trigger: 'item',
+							        formatter: "{a} <br/>{b} : {c} ({d}%)"
+							    },
+								    color:['#8fc31f','#f35833','#00ccff','#ffcc00','#315FA0','#03B48E'],
+								    series : [
+								        {
+								            name: 'Popular',
+								            type: 'pie',
+								            radius : '10%',
+								           center: ["50%", "50%"],
+								           radius: ["30%", "58%"],
+								           
+								            data:data3,
+								            itemStyle: {
+								                normal: {
+								                    label:{ 
+							                            show: true, 
+							//	                            position:'inside',
+							                            formatter: '{b} : {c} ({d}%)' ,
+							                            textStyle:{
+							                                fontSize:10
+							                            }
+							                        },
+							                         borderColor: '#ffffff',
+							                borderWidth:6,
+								                },
+								            }
+								        }
+								    ]
+							};
+
+							option4 = {
+							    backgroundColor:'#ffffff',
+							    title:{
+							        text:"Related queries —— Increased search volume",
+							        left:'center',
+							        top:'5%',
+							        textStyle:{
+							            color:"#333",
+							            fontSize:15,
+							            
+							        }
+							    },
+							     tooltip : {
+							        trigger: 'item',
+							        formatter: "{a} <br/>{b} : {c} ({d}%)"
+							    },
+								    color:['#8fc31f','#f35833','#00ccff','#ffcc00','#315FA0','#03B48E'],
+								    series : [
+								        {
+								            name: 'Increased search volume',
+								            type: 'pie',
+								            radius : '10%',
+								           center: ["50%", "50%"],
+								           radius: ["30%", "58%"],
+								           
+								            data:data4,
+								            itemStyle: {
+								                normal: {
+								                    label:{ 
+							                            show: true, 
+							//	                            position:'inside',
+							                            formatter: '{b} : {c} ({d}%)' ,
+							                            textStyle:{
+							                                fontSize:10
+							                            }
+							                        },
+							                         borderColor: '#ffffff',
+							                borderWidth:10,
+								                },
+								            }
+								        }
+								    ]
+							};
+				            myChart3.setOption(option3);
+				            myChart4.setOption(option4);
+
+						}
+		for (var n = 0; n < migration.length; n++) {
+		                var res = [];
+		                for (j = 0; j < area[n].length; j++) {
+
+		                    res.push({
+		                        name: area_en[n][j],
+		                        value: migration[n][j]            
+		                    });
+		                }
+						// console.log(res.length);
+
+
+		                res.sort(function(a, b) {
+		                    return a.value - b.value;
+		                });
+		                var res1 = [];
+		                var res2 = [];
+		                for (t = 0; t < 10; t++) {
+		                    res1[t] = res[res.length - 1 - t].name;
+		                    res2[t] = res[res.length - 1 - t].value;
+		                }
+		                // console.log(res2);
+		                // console.log(res1);   
+		                option.options.push({
+		                    title: [{
+		                             text: years[n] + " Heat of migration  ",
+		                             textStyle: {
+		                                color: '#2D3E53',
+		                                fontSize: 28,
+		                                fontFamily:'sans-serif'
+		                            },
+		                            left: 20,
+		                            top: 20,
+		                        },
+		                        {
+		                            show: true,
+		                            text: 'Search for the top 10 hot countries',
+		                            textStyle: {
+		                                color: '#2D3E53',
+		                                fontSize: 14
+		                            },
+		                            left: '5%',
+		                            top: '40%'
+		                        }
+		                    ],
+		                    yAxis: {
+		                        data: res1,
+		                    },
+		                    series: [{
+		                        type: 'map',
+		                        data: res,
+								
+		                    }, 
+		                    {
+		                        type: 'bar',
+		                        data: res2,
+								//fontsize: '14',
+								left: '1%',
+								
+		                        itemStyle: {
+		                            normal: {
+		                                color: function(params) {
+		                                    // build a color map as your need.
+		                                    var colorList = [{
+		                                            colorStops: [{
+		                                                offset: 0,
+		                                                color: '#FF0000' // 0% 处的颜色
+		                                            }, {
+		                                                offset: 1,
+		                                                color: '#990000' // 100% 处的颜色
+		                                            }]
+		                                        },
+		                                        {
+		                                            colorStops: [{
+		                                                offset: 0,
+		                                                color: '#FF8C00' // 0% 处的颜色
+		                                            }, {
+		                                                offset: 1,
+		                                                color: '#FF4500' // 100% 处的颜色
+		                                            }]
+		                                        }
+		                                    ];
+		                                    if (params.dataIndex < 3) {
+		                                        return colorList[0]
+		                                    } else {
+		                                        return colorList[1]
+		                                    }
+		                                },
+		                            }
+									//left: '1%'
+		                        },
+		                    }]
+		                });
+
+
+		            }//for (var n = 0; n < migration.length; n++)
+		            myChart.setOption(option);
+	            
+    </script> 
+
+</body>
+
+</html>
