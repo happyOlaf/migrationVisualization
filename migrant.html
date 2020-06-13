@@ -112,15 +112,25 @@
         }
         #leftcharts1{
             position: absolute;
-            margin-top: 5px;
+            margin-top: 35px;
             width: 300px;
             height: 320px;
+        }
+		#lefthead{
+            position:absolute;
+            width:320px;
+            height:30px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #FFD700;
+            text-align: center;
+            font-weight: bold;
         }
         #lefthead2{
             position:absolute;
             width:320px;
             height:30px;
-            margin-top: 330px;
+            margin-top: 360px;
             font-size: 14px;
             color: #FFD700;
             text-align: center;
@@ -128,9 +138,9 @@
         }
         #leftcharts2{
             position: absolute;
-            margin-top: 350px;
+            margin-top: 360px;
             width: 340px;
-            height: 240px;
+            height: 230px;
         }
 
         #righthead{
@@ -158,7 +168,7 @@
     <div style="float: left;">
         <label class="switch-btn circle-style">
             <input class="checked-switch" type="checkbox" />
-            <span class="text-switch" data-yes="移入" data-no="移出"></span> 
+            <span class="text-switch" data-yes="Imi" data-no="Emi"></span> 
             <span class="toggle-btn"></span> 
         </label>
     </div>
@@ -186,9 +196,10 @@
             <div id="leftArrow" class="sidbear-toggle rounded-rect left" onclick="toggleSidebar('left')">
                 &raquo;
             </div>
+			<div id="lefthead">Emigrants to Different Continents</div>
             <div id="leftcharts1">
             </div>
-            <div id="lefthead2">1990 年 中国移民（移入）年龄分布</div>
+            <div id="lefthead2">Emigrants by World Bank Income Groups</div>
             <div id="leftcharts2">
             </div>
         </div>
@@ -200,7 +211,7 @@
                 &laquo;
             </div>
             <!-- <div id="righthead">1990 年 中国 有 185 个移民目的国</div> -->
-			<div id="righthead">Ranking of immigrants by country in 1990</div>
+			<div id="righthead">Ranking of Immigrants by Country in 1990</div>
 			
             <div id="Rightcharts1">
             </div>
@@ -219,6 +230,7 @@
 			
             Drawleftecharts1();
 			Drawrightecharts(bardata_in);
+			Drawleftecharts2();
         }
         else{
             status = "out";
@@ -228,6 +240,7 @@
             //Drawleftecharts1(Ytotal_out);
             Drawleftecharts1();
 			Drawrightecharts(bardata_out);
+			Drawleftecharts2();
         }
     });
 
@@ -334,7 +347,7 @@
 <script type="text/javascript">
      var curCountry = "China";    //记录当前国家
      var curyear = "1990";       //记录当前年份
-     var status = "in";        //记录当前移入移出状态  
+     var status = "out";        //记录当前移入移出状态  
 	 var openflag = 0;   //记录初次加载标记
      //var mystr = 'assets/data/migrant_' + '1990' + '.json';
 	 var mystr = 'http://localhost:8081/Json/migrant/1990';//初始数据
@@ -939,8 +952,8 @@
     function Drawrightecharts(datas){
         //var rightheadtext_in = curyear + " 年国家人口移入数量排序 " ;
         //var rightheadtext_out = curyear + " 年国家人口移出数量排序 ";
-		var rightheadtext_in = 'Ranking of Emigrants by Country in ' + curyear;
-		var rightheadtext_out = 'Ranking of Immigrants by Country in ' + curyear;
+		var rightheadtext_in = 'Ranking of Immigrants by Country in ' + curyear;
+		var rightheadtext_out = 'Ranking of Emigrants by Country in ' + curyear;
         if (status == "in") {
              document.getElementById('righthead').innerHTML=rightheadtext_in;
         }
@@ -1103,6 +1116,14 @@
 
 		
 	function Drawleftecharts1(){
+		var leftheadtext_in = 'Immigrants to Different Continents';
+		var leftheadtext_out = 'Emigrants to Different Continents';
+        if (status == "in") {
+             document.getElementById('lefthead').innerHTML = leftheadtext_in;
+        }
+        if (status == "out") {
+             document.getElementById('lefthead').innerHTML = leftheadtext_out;
+        }
 		var rightcharts1 = echarts.init(document.getElementById('leftcharts1'));
 		var lineStyle = {
 			normal: {
@@ -1495,95 +1516,212 @@
 		rightcharts1.setOption(option);
 	}
 	function Drawleftecharts2(){
+		var leftheadtext_in = 'Immigrants by World Bank Income Groups';
+		var leftheadtext_out = 'Emigrants by World Bank Income Groups';
+        if (status == "in") {
+             document.getElementById('lefthead2').innerHTML = leftheadtext_in;
+        }
+        if (status == "out") {
+             document.getElementById('lefthead2').innerHTML = leftheadtext_out;
+        }
 		var rightcharts2 = echarts.init(document.getElementById('leftcharts2'));
-			option = {
-			tooltip: {
-				trigger: 'axis',
-				axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-					type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-				}
-			},
-			legend: {
-				data: ['HighIncome', 'MidIncome', 'LowIncome'],
-				bottom: 190,				
-				itemGap: 10,
-				textStyle: {
-					color: '#fff',
-					fontSize: 12
-				},
-			},
-			grid: {
-				left: '3%',
-				right: '4%',
-				bottom: '3%',
-				containLabel: true,
-				nameTextStyle: {
-					color: '#000',
-					fontSize: 12
-				},
-				
-			},
-			xAxis: {
-				type: 'value',
-				axisLabel: {
-					rotate:30,
-					textStyle: {
-						color: '#FFF',
-						fontSize: 8
+			
+			if(status == 'in'){
+				option = {
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+						type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
 					}
-					
-					
 				},
-			},
-			yAxis: {
-				type: 'category',
-				data: ['1990', '1995', '2000', '2005', '2010', '2015', '2019'],
-				
-				axisLabel: {
-					
+				legend: {
+					data: ['HighIncome', 'MidIncome', 'LowIncome'],
+					bottom: 180,				
+					itemGap: 10,
 					textStyle: {
-						color: '#FFF',
+						color: '#fff',
 						fontSize: 12
+					},
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true,
+					nameTextStyle: {
+						color: '#000',
+						fontSize: 12
+					},
+					
+				},
+				xAxis: {
+					type: 'value',
+					axisLabel: {
+						rotate:30,
+						textStyle: {
+							color: '#FFF',
+							fontSize: 8
+						}
+						
+						
+					},
+				},
+				yAxis: {
+					type: 'category',
+					data: ['1990', '1995', '2000', '2005', '2010', '2015', '2019'],
+					
+					axisLabel: {
+						
+						textStyle: {
+							color: '#FFF',
+							fontSize: 12
+						}
+						
+						
+					},
+				},
+				series: [
+					{
+						name: 'HighIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						//barWidth: 5,
+						data: [77802868,	89346612,	103029727,	120543730,	144282576,	160366582,	175811829]
+					},
+					{
+						name: 'MidIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						data: [65124366,	61040029,	61158978,	61623367,	65980003,	76123099,	82237681]
+					},
+					{
+						name: 'LowIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						data: [9790238,	10577086,	8975609,	8969212,	10040501,	11869725,	13072099]
 					}
-					
-					
-				},
-			},
-			series: [
-				{
-					name: 'HighIncome',
-					type: 'bar',
-					stack: '总量',
-					label: {
-						show: false,
-						position: 'insideRight'
-					},
-					//barWidth: 5,
-					data: [77802868,	89346612,	103029727,	120543730,	144282576,	160366582,	175811829]
-				},
-				{
-					name: 'MidIncome',
-					type: 'bar',
-					stack: '总量',
-					label: {
-						show: false,
-						position: 'insideRight'
-					},
-					data: [65124366,	61040029,	61158978,	61623367,	65980003,	76123099,	82237681]
-				},
-				{
-					name: 'LowIncome',
-					type: 'bar',
-					stack: '总量',
-					label: {
-						show: false,
-						position: 'insideRight'
-					},
-					data: [9790238,	10577086,	8975609,	8969212,	10040501,	11869725,	13072099]
-				}
+					/*33866033, 88372330, 21292572
+					35178612, 97323763, 19392843
+					37249840, 107661584, 18973428
+					39937217, 122066230, 19419889
+					44449042, 143044467, 23130631
+					47927311, 155239025, 29629367
+					49217610, 170409368, 39136450高中低*/
 				
-			]
-		};
+				]
+			  }
+			}
+			else{
+				option = {
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+						type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+					}
+				},
+				legend: {
+					data: ['HighIncome', 'MidIncome', 'LowIncome'],
+					bottom: 180,				
+					itemGap: 10,
+					textStyle: {
+						color: '#fff',
+						fontSize: 12
+					},
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true,
+					nameTextStyle: {
+						color: '#000',
+						fontSize: 12
+					},
+					
+				},
+				xAxis: {
+					type: 'value',
+					axisLabel: {
+						rotate:30,
+						textStyle: {
+							color: '#FFF',
+							fontSize: 8
+						}
+						
+						
+					},
+				},
+				yAxis: {
+					type: 'category',
+					data: ['1990', '1995', '2000', '2005', '2010', '2015', '2019'],
+					
+					axisLabel: {
+						
+						textStyle: {
+							color: '#FFF',
+							fontSize: 12
+						}
+						
+						
+					},
+				},
+				series: [
+					{
+						name: 'HighIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						//barWidth: 5,
+						data: [33866033,35178612,37249840,39937217,44449042,47927311,49217610]
+				       
+						
+					},
+					{
+						name: 'MidIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						data: [88372330, 97323763, 107661584,122066230,143044467, 155239025,170409368]
+					       
+					},
+					{
+						name: 'LowIncome',
+						type: 'bar',
+						stack: '总量',
+						label: {
+							show: false,
+							position: 'insideRight'
+						},
+						data: [21292572,19392843,18973428,19419889,23130631,29629367,39136450]
+		        
+					}           
+					
+				]
+			
+			
+			
+			
+			
+			  }
+		    };
 		rightcharts2.setOption(option);
 	}
 </script>
