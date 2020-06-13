@@ -165,7 +165,7 @@
     <div style="float: left;">
         <label class="switch-btn circle-style">
             <input class="checked-switch" type="checkbox" />
-            <span class="text-switch" data-yes="移入" data-no="移出"></span> 
+            <span class="text-switch" data-yes="Imm" data-no="Emi"></span> 
             <span class="toggle-btn"></span> 
         </label>
     </div>
@@ -195,7 +195,7 @@
             </div>
             <div id="leftcharts1">
             </div>
-            <div id="lefthead2">1990 年 中国移民（移入）年龄分布</div>
+            <div id="lefthead2"></div>
             <div id="leftcharts2">
             </div>
         </div>
@@ -206,7 +206,7 @@
                 onclick="toggleSidebar('right')">
                 &laquo;
             </div>
-            <div id="righthead">1990 年 中国 有 185 个移民目的国</div>
+            <div id="righthead"></div>
             <div id="Rightcharts1">
             </div>
         </div>
@@ -990,8 +990,8 @@
     Drawrightecharts(bardata_out);
     //绘制右侧国家排名图
     function Drawrightecharts(datas){
-        var rightheadtext_in = curyear + " 年有 " + road_in.length + " 个移民来源国";
-        var rightheadtext_out = curyear + " 年有 " + road_out.length + " 个移民目的国";
+        var rightheadtext_in = curyear + ", " + road_in.length + " source countries";
+        var rightheadtext_out = curyear + " , " + road_out.length + " destination countries";
         if (status == "in") {
              document.getElementById('righthead').innerHTML=rightheadtext_in;
         }
@@ -1170,7 +1170,7 @@
     getPiedata(curCountry,curyear);
     Drawleftrchats2(pieAgedata);
     function Drawleftrchats2(datas){
-         var lefthead2Text=curyear +" 年移民（移入）年龄分布";
+         var lefthead2Text="Age distribution of immigrants in " + curyear;
         document.getElementById('lefthead2').innerHTML=lefthead2Text;
 
          var leftcharts2 = echarts.init(document.getElementById('leftcharts2'));
