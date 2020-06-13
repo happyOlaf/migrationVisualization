@@ -48,6 +48,8 @@ margin-bottom: 200px;
 	var title=[];
 	var contain=[];
 	var tem=[];
+	var Month=[];
+	var Country=[];
 	$.ajax({  
         //请求方式  
         type:"GET",
@@ -63,9 +65,23 @@ margin-bottom: 200px;
                 title[i]=n.title;
                 contain[i]=n.contain;
                 tem['chapters'+i]={center:[n.lon,n.lat],zoom:n.zoom};
+                Country[i]=n.country;
+                if (n.month==1) {Month[i]='In January 2019';}
+                else if (n.month==2) {Month[i]='In February 2019';}
+                else if (n.month==3) {Month[i]='In March 2019';}
+                else if (n.month==4) {Month[i]='In April 2019';}
+                else if (n.month==5) {Month[i]='In May 2019';}
+                else if (n.month==6) {Month[i]='In June 2019';}
+                else if (n.month==7) {Month[i]='In July 2019';}
+                else if (n.month==8) {Month[i]='In August 2019';}
+                else if (n.month==9) {Month[i]='In September 2019';}
+                else if (n.month==10) {Month[i]='In October 2019';}
+                else if (n.month==11) {Month[i]='In November 2019';}
+                else if (n.month==12) {Month[i]='In December 2019';}
             }); 
         } 
     });
+    tem['blank']={center:[0,0],zoom:1};
 	// TO MAKE THE MAP APPEAR YOU MUST
 	// ADD YOUR ACCESS TOKEN FROM
 	// https://account.mapbox.com
@@ -113,9 +129,12 @@ return bounds.top < window.innerHeight && bounds.bottom > 0;
 <div id="features">
 	<script type="text/javascript">
 		$.each(title,function(i,n){
-                $("#features").append("<section id=\"chapters"+i+"\" class=\"active\"><h3>"+n+"</h3><p>"+contain[i]+"</p>");
+                $("#features").append("<section id=\"chapters"+i+"\" class=\"active\"><h3>"+n+"</h3><h4>"+Month[i]+",  "+Country[i]+"</h4><p>"+contain[i]+"</p>");
             }); 
 	</script>
+	<section id="blank">
+		<p><br><br><br><br></p>
+	</section>
 
 
 </div>
