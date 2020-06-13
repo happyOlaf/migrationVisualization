@@ -14,14 +14,29 @@
     <script src="assets/js/main.js"></script> <!-- Resource jQuery -->
     <link rel="stylesheet" type="text/css" href="assets/css/switch-buttons.css">
 <style>
-		body { margin: 0; padding: 0; }
-		#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-		#SelContainer{
+	
+		body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        #SelContainer{
             position: absolute;
             top: 20px;
             left: 20px;
         }
-		.flex-center {
+        #countrylist{
+            width: 200px;
+        }
+
+
+        .flex-center {
             position: absolute;
             display: flex;
             justify-content: center;
@@ -73,7 +88,7 @@
             transition: transform 0.5s;
             z-index: 1;
             width: 360px;
-            height: 600px;
+            height: 620px;
 
         }
         .rounded-rect {
@@ -95,13 +110,13 @@
             height: 50px;
             margin-top: 60px;
         }
-        #Rightcharts1{
+        #leftcharts1{
             position: absolute;
             margin-top: 5px;
             width: 300px;
             height: 320px;
         }
-        #Righthead2{
+        #lefthead2{
             position:absolute;
             width:320px;
             height:30px;
@@ -111,14 +126,14 @@
             text-align: center;
             font-weight: bold;
         }
-        #Rightcharts2{
+        #leftcharts2{
             position: absolute;
-            margin-top: 330px;
+            margin-top: 350px;
             width: 340px;
             height: 240px;
         }
 
-        #lefthead{
+        #righthead{
             position:absolute;
             width:320px;
             height:30px;
@@ -128,7 +143,7 @@
             text-align: center;
             font-weight: bold;
         }
-        #leftcharts1{
+        #Rightcharts1{
             position:absolute;
             width:340px;
             height:520px;
@@ -136,14 +151,14 @@
         }
 </style>
 </head>
-<body>
+<body style=" margin: 0;overflow: hidden;background: #fff;width: 100%;height:100%">
 <div id="map"></div>
 <div id="SelContainer">
     
     <div style="float: left;">
         <label class="switch-btn circle-style">
             <input class="checked-switch" type="checkbox" />
-            <span class="text-switch" data-yes="移出" data-no="移入"></span> 
+            <span class="text-switch" data-yes="移入" data-no="移出"></span> 
             <span class="toggle-btn"></span> 
         </label>
     </div>
@@ -163,29 +178,31 @@
             <span aria-hidden="true" class="stretchy-nav-bg"></span>
         </nav>
     </header>
-
+</div>
     <div id="timecharts" style="">      
     </div>
-    <div id="right" class="sidebar flex-center right collapsed" style="">
+    <div id="left" class="sidebar flex-center left collapsed" style="">
         <div class="sidebar-content rounded-rect flex-center">
-            <div id="rightArrow" class="sidbear-toggle rounded-rect right" onclick="toggleSidebar('right')">
+            <div id="leftArrow" class="sidbear-toggle rounded-rect left" onclick="toggleSidebar('left')">
                 &raquo;
             </div>
-            <div id="Rightcharts1">
+            <div id="leftcharts1">
             </div>
-            <div id="Righthead2">1990 年 中国移民（移入）年龄分布</div>
-            <div id="Rightcharts2">
+            <div id="lefthead2">1990 年 中国移民（移入）年龄分布</div>
+            <div id="leftcharts2">
             </div>
         </div>
     </div>
-    <div id="left" class="sidebar flex-center left collapsed">
+    <div id="right" class="sidebar flex-center right collapsed">
         <div class="sidebar-content rounded-rect flex-center">
-            <div class="sidbear-toggle rounded-rect left"
-                onclick="toggleSidebar('left')">
+            <div class="sidbear-toggle rounded-rect right"
+                onclick="toggleSidebar('right')">
                 &laquo;
             </div>
-            <div id="lefthead">1990 年 中国 有 185 个移民目的国</div>
-            <div id="leftcharts1">
+            <!-- <div id="righthead">1990 年 中国 有 185 个移民目的国</div> -->
+			<div id="righthead">Ranking of immigrants by country in 1990</div>
+			
+            <div id="Rightcharts1">
             </div>
         </div>
     </div>
@@ -200,8 +217,8 @@
             //DrawRoad(road_in);
             //Drawleftecharts1(Ytotal_in);
 			
-            Drawleftecharts(bardata_in);
-			Drawrightcharts1();
+            Drawleftecharts1();
+			Drawrightecharts(bardata_in);
         }
         else{
             status = "out";
@@ -209,8 +226,8 @@
 			refresh();
             //DrawRoad(road_out);
             //Drawleftecharts1(Ytotal_out);
-            Drawleftecharts(bardata_out);
-			Drawrightcharts1();
+            Drawleftecharts1();
+			Drawrightecharts(bardata_out);
         }
     });
 
@@ -278,13 +295,13 @@
                 //DrawRoad(road_in); 
                 
                 //绘制右侧排名柱状图
-                Drawleftecharts(bardata_in);
+                Drawrightecharts(bardata_in);
             }
             else { 
                 //DrawRoad(road_out); 
                 
                 //绘制右侧排名柱状图
-                Drawleftecharts(bardata_out);
+                Drawrightecharts(bardata_out);
                 
             }
 
@@ -781,8 +798,8 @@
 	getRankData(curyear);
 	refreshstatus();
 	refresh();
-	Drawrightcharts1();
-	Drawrightecharts2();
+	Drawleftecharts1();
+	Drawleftecharts2();
     // code for creating an SVG donut chart from feature properties
     function createDonutChart(props) {
         var offsets = [];
@@ -917,18 +934,20 @@
         });
     }
     GetRankdata();
-    Drawleftecharts(bardata_out);
+    Drawrightecharts(bardata_out);
     //绘制右侧国家排名图
-    function Drawleftecharts(datas){
-        var rightheadtext_in = curyear + " 年国家人口移入数量排序 " ;
-        var rightheadtext_out = curyear + " 年国家人口移出数量排序 ";
+    function Drawrightecharts(datas){
+        //var rightheadtext_in = curyear + " 年国家人口移入数量排序 " ;
+        //var rightheadtext_out = curyear + " 年国家人口移出数量排序 ";
+		var rightheadtext_in = 'Ranking of Emigrants by Country in ' + curyear;
+		var rightheadtext_out = 'Ranking of Immigrants by Country in ' + curyear;
         if (status == "in") {
-             document.getElementById('lefthead').innerHTML=rightheadtext_in;
+             document.getElementById('righthead').innerHTML=rightheadtext_in;
         }
         if (status == "out") {
-             document.getElementById('lefthead').innerHTML=rightheadtext_out;
+             document.getElementById('righthead').innerHTML=rightheadtext_out;
         }
-        var Rightcharts1 = echarts.init(document.getElementById('leftcharts1'));//这边画左边的echarts图
+        var Rightcharts1 = echarts.init(document.getElementById('Rightcharts1'));//这边画左边的echarts图
         // import echarts from 'echarts'
         var rankCtylist = datas.countryList;
         var rankCtydata = datas.countrydata;
@@ -1083,8 +1102,8 @@
 	
 
 		
-	function Drawrightcharts1(){
-		var rightcharts1 = echarts.init(document.getElementById('Rightcharts1'));
+	function Drawleftecharts1(){
+		var rightcharts1 = echarts.init(document.getElementById('leftcharts1'));
 		var lineStyle = {
 			normal: {
 				width: 1,
@@ -1475,8 +1494,8 @@
 		}
 		rightcharts1.setOption(option);
 	}
-	function Drawrightecharts2(){
-		var rightcharts2 = echarts.init(document.getElementById('Rightcharts2'));
+	function Drawleftecharts2(){
+		var rightcharts2 = echarts.init(document.getElementById('leftcharts2'));
 			option = {
 			tooltip: {
 				trigger: 'axis',
