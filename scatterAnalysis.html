@@ -64,7 +64,7 @@
         //console.log(year.toString());
         //var str = (year.toString()).substr(2, 2);
         var str = getGDPyear(year);
-        console.log(str);
+        //console.log(str);
         $.ajaxSettings.async = false;
         var url_gdp = "http://localhost:8081/GPD/Year/" + str;
         $.getJSON(url_gdp, function(geojson) {
@@ -323,7 +323,7 @@
     var mController = gui.add(obj, 'yAxis', ['NetMigrationRate', 'NetMigrationNumber']);
     yearController.onChange(function(value) {//监听事件
         if (value != yearFlag) {
-            //console.log(1);
+            console.log(1);
             dataSet0 = getYearData(value);
             // myChart.setOption({
             //     dataset: {
@@ -338,7 +338,7 @@
                 series: {
                     type: 'scatter',
                     encode: {
-                        tooltip: ['country', xAxisFlag, yAxisFlag],
+                        //tooltip: ['country', xAxisFlag, yAxisFlag],
                         x: xAxisFlag,
                         y: yAxisFlag
                         //y: 'nmr9095'
@@ -352,7 +352,7 @@
     gdpController.onChange(function(value) {
         if (value != xAxisFlag) {
             xAxisFlag = value;
-            //console.log('xAxisFlag');
+            console.log(xAxisFlag);
             myChart.setOption({
                 dataset: {
                     // 提供一份数据。
@@ -367,7 +367,7 @@
                 series: {
                     encode: {
                         type: 'scatter',
-                        tooltip: ['country', xAxisFlag, yAxisFlag],
+                        //tooltip: ['country', xAxisFlag, yAxisFlag],
                         // 将 "amount" 列映射到 X 轴。
                         x: xAxisFlag,
                         // 将 "product" 列映射到 Y 轴。
@@ -381,7 +381,7 @@
     mController.onChange(function(value) {
         if (value != yAxisFlag) {
             yAxisFlag = value;
-            //console.log('xAxisFlag');
+            console.log(yAxisFlag);
             myChart.setOption({
                 dataset: {
                     // 提供一份数据。
@@ -396,7 +396,7 @@
                 series: {
                     encode: {
                         type: 'scatter',
-                        tooltip: ['country', xAxisFlag, yAxisFlag],
+                        //tooltip: ['country', xAxisFlag, yAxisFlag],
                         // 将 "amount" 列映射到 X 轴。
                         x: xAxisFlag,
                         // 将 "product" 列映射到 Y 轴。
@@ -417,19 +417,19 @@
     
     <script type="text/javascript">
     var dom2 = document.getElementById("chart");
-    var myChart = echarts.init(dom2);
+    var myChart2 = echarts.init(dom2);
     var yAxisFlag1 = 'NetMigrationNumber';
     var yAxisFlag2 = 'NetMigrationRate';
     var countryCode = [
         ["China", 156, "CN", 35.8617, 104.1954, "中国"],
-        ["United States of America", 840, "US", 37.0902, -95.7129, "美国"],
+        ["United States", 840, "US", 37.0902, -95.7129, "美国"],
         ["Germany", 276, "DE", 51.1657, 10.4515, "德国"],
         ["France", 250, "FR", 46.2276, 2.2137, "法国"],
         ["United Kingdom of Great Britain and Northern Ireland", 826, "GB", 55.3781, -3.4360, "英国"],
         ["Japan", 392, "JP", 36.2048, 138.2529, "日本"],
         ["Russian Federation", 643, "RU", 61.5240, 105.3188, "俄罗斯"],
         ["India", 356, "IN", 20.5937, 78.9629, "印度"],
-        ["China, Hong Kong Special Administrative Region", 344, "HK", 22.3964, 114.1095, "中国香港"],
+        ["China, Hong Kong SAR", 344, "HK", 22.3964, 114.1095, "中国香港"],
         ["Mexico", 484, "MX", 19.4326, -99.1332, "墨西哥"],
         ["Brazil", 76, "BR", -14.2350, -51.9253, "巴西"],
         ["Afghanistan", 4, "AF", 33.9391, 67.7100, "阿富汗"],
@@ -474,7 +474,7 @@
         ["Chad", 148, "TD", 15.4542, 18.7322, "乍得"],
         ["Channel Islands", 830, "ZZ", 49.2327, 2.2052, "海峡群岛"],
         ["Chile", 152, "CL", -35.6751, -71.5430, "智利"],
-        ["China, Macao Special Administrative Region", 446, "MO", 22.1987, 113.5439, "中国澳门"],
+        ["China, Macao SAR", 446, "MO", 22.1987, 113.5439, "中国澳门"],
         ["Colombia", 170, "CO", 4.5709, -74.2973, "哥伦比亚"],
         ["Comoros", 174, "KM", -11.6455, 43.3333, "科摩罗"],
         ["Congo", 178, "CG", -4.0383, 21.7587, "刚果"],
@@ -656,7 +656,7 @@
     ];
     var niw = "";
     var curCountry = "";
-    var dataSet0 = [];
+    var dataSet2 = [];//折线图数据集
     for (var i = 0; i < countryCode.length; i++) {
         niw += '<option>' + countryCode[i][5] + '|' + countryCode[i][0] + '</option>';
     }
@@ -664,12 +664,12 @@
     $("#countrylist").change(function() {
         val = $('option:selected', '#countrylist').index();
         curCountry = countryCode[val][0];
-        dataSet0 = getCountryData(curCountry);
-        if ($.isEmptyObject(dataSet0)) { console.log("Thie Country has no data.") } else {
-            myChart.setOption({
+        dataSet2 = getCountryData(curCountry);
+        if ($.isEmptyObject(dataSet2)) { console.log("Thie Country has no data.") } else {
+            myChart2.setOption({
                 dataset: {
                     // 提供一份数据。
-                    source: dataSet0
+                    source: dataSet2
                 },
                 series: {
                     name: yAxisFlag1,
@@ -744,7 +744,7 @@
 
     function initializeData() {
         curCountry = "China";
-        dataSet0 = getCountryData(curCountry);
+        dataSet2 = getCountryData(curCountry);
     }
     initializeData();
     option = null;
@@ -818,7 +818,7 @@
 
         },
         dataset: {
-            source: dataSet0
+            source: dataSet2
         },
         series: {
             name: yAxisFlag1,
@@ -831,7 +831,7 @@
         }
     };;
     if (option && typeof option === "object") {
-        myChart.setOption(option, true);
+        myChart2.setOption(option, true);
     }
     </script>
 </body>
