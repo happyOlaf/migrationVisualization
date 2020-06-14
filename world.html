@@ -490,6 +490,8 @@
 						DrawPie(curyday);
 					});
 					function DrawLine(curyear){
+						days =[];
+						days_num = [];
 						$.ajax({  
 			                //请求方式  
 			                type:"GET",
@@ -597,6 +599,10 @@
 						}
 
 						function DrawPie(curyear){
+							topwords = [];
+							top_num = [];
+							risingwords = [];
+							rising_num = [];
 							$.ajax({  
 				                //请求方式  
 				                type:"GET",
