@@ -7,6 +7,10 @@
 <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
 <script src="assets/js/jquery-latest.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/style.css"> <!-- Resource style -->
+    <script src="assets/js/jquery-2.1.1.min.js"></script>
+    <script src="assets/js/modernizr.js"></script> <!-- Modernizr -->
+    <script src="assets/js/main.js"></script> <!-- Resource jQuery -->
 
 <style>
 	body { margin: 0; padding: 0; }
@@ -42,9 +46,26 @@
 	margin-bottom: 200px;
 	}
 </style>
-
+      <header>
+        <nav class="cd-stretchy-nav" style="margin-right: 570px;">
+            <a class="cd-nav-trigger" href="#0">
+                <span aria-hidden="true"></span>
+            </a>
+            <ul>
+                <li><a href="index.html"><span style="color: black;">Home</span></a></li>
+                <li><a href="dataVisualization.html"><span style="color: black;">dataVisualization</span></a></li>
+                <li><a href="routeVisualization.html"><span style="color: black;">routeVisualization</span></a></li>
+                <li><a href="networkAnalysis.html"><span style="color: black;">networkAnalysis</span></a></li>
+                <li><a href="EconomyAnalysis.html" ><span style="color: black;">EconomyAnalysis</span></a></li>
+                <li><a href="thermalAnalysis.html"><span style="color: black;">thermalAnalysis</span></a></li>
+                <li><a href="Immigrationpolicy.html" class="active"><span style="color: black;">Immigrationpolicy</span></a></li>
+            </ul>
+            <span aria-hidden="true" class="stretchy-nav-bg"></span>
+        </nav>
+    </header>
  
 <div id="map"></div>
+
 <script>
 	var title=[];
 	var contain=[];
