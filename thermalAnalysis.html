@@ -27,11 +27,11 @@
             </a>
             <ul>
                 <li><a href="index.html"><span>Home</span></a></li>
-                <li><a href="dataVisualization.html"><span>dataVisualization</span></a></li>
-                <li><a href="routeVisualization.html"><span>routeVisualization</span></a></li>
-                <li><a href="networkAnalysis.html"><span>networkAnalysis</span></a></li>
+                <li><a href="dataVisualization.html"><span>DataVisualization</span></a></li>
+                <li><a href="routeVisualization.html"><span>RouteVisualization</span></a></li>
+                <li><a href="networkAnalysis.html"><span>NetworkAnalysis</span></a></li>
                 <li><a href="EconomyAnalysis.html" ><span>EconomyAnalysis</span></a></li>
-                <li><a href="thermalAnalysis.html"class="active"><span>thermalAnalysis</span></a></li>
+                <li><a href="thermalAnalysis.html"class="active"><span>HeatAnalysis</span></a></li>
                 <li><a href="Immigrationpolicy.html"><span>Immigrationpolicy</span></a></li>
             </ul>
             <span aria-hidden="true" class="stretchy-nav-bg"></span>
@@ -510,6 +510,8 @@
 						DrawPie(curyday);
 					});
 					function DrawLine(curyear){
+                        days =[];
+                        days_num = [];
 						$.ajax({  
 			                //请求方式  
 			                type:"GET",
@@ -617,6 +619,10 @@
 						}
 
 						function DrawPie(curyear){
+                            topwords = [];
+                            top_num = [];
+                            risingwords = [];
+                            rising_num = [];
 							$.ajax({  
 				                //请求方式  
 				                type:"GET",
