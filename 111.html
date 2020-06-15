@@ -21,25 +21,6 @@
             padding: 0;
             background-color: rgba(0,0,0,1);
         }
-        #SelContainer{
-            position: absolute;
-            width: 240px;
-            top: 10px;
-            left: 25px;
-            border-radius: 10px;
-            border: 1px solid;
-            border-color: #DCDCDC;
-            background-color: rgba(0,0,0,0.7);
-        }
-        #InforContainer{
-            position: absolute;
-            width: 140px;
-            top: 10px;
-            left: 280px;
-            border-radius: 10px;
-            border-color: #DCDCDC;
-            background-color: rgba(0,0,0,0.7);
-        }
         #yearlist{
             position: absolute;
             left: 130px;
@@ -67,6 +48,27 @@
         	position: relative; /*脱离文档流*/
             top: 20px;
             bottom: 20px
+        }
+
+        #SelContainer{
+            position: absolute;
+            width: 240px;
+            top: 10px;
+            left: 25px;
+            border-radius: 10px;
+            border: 1px solid;
+            border-color: #DCDCDC;
+            background-color: rgba(0,0,0,0.7);
+        }
+        #InforContainer{
+            position: absolute;
+            width: 150px;
+            top: 10px;
+            left: 280px;
+            border-radius: 10px;
+            /*border: 1px solid;*/
+            border-color: #DCDCDC;
+            background-color: rgba(0,0,0,0.7);
         }
 
         #leftcontainer{
@@ -155,6 +157,7 @@
     	<button type="button" id="submit" class="btn btn-warning" onclick="Excute()"style="display:block;margin:0 auto;background-color: #FFA500">Build Graph</button>
     </div>
 </div>
+
 <div id="InforContainer">
 	<label class="" id="NodesNum"style="color: white;font-size: 12px;color:#DCDCDC;display:block">Nodes Num: </label>
 	<label class="" id="AvgOutde"style="color: white;font-size: 12px;color:#DCDCDC;display:block">Avg outde: </label>
@@ -187,13 +190,14 @@
             link:[],
         }
 
+
         var NodesNum = 0;
         var AvgOutde = 0;
         var AvgInde = 0;
         var EdgesNum = 0;
         var MInEdge = 0;
         var AvgEdstg = 0
-
+        
         var countryIn = [];    //入度数组 
         var countryOut = [];   //出度数组
         var countrylist = [];       //出度入度之和
@@ -247,7 +251,7 @@
 	     }
 
 	    function Excute(){
-        	var num = roadNum=document.getElementById("raodnumbt").value;
+        	var num = document.getElementById("raodnumbt").value;
         	if ( num < 100 ) { 
         		alert("Too few paths")
         	}
@@ -324,8 +328,6 @@
 	            }
 
 	        }
-	        console.log(bardata.countryList);
-	        console.log(bardata.countrydata);
 
 	        //出度和入度相加
 	        for(var i = 0; i < 232; i++){
@@ -404,8 +406,16 @@
 
 	        NodesNum = countryOrderAdd.length;
 	        document.getElementById("NodesNum").innerHTML = "Nodes Num: "+ NodesNum;
-	        /*console.log(maxdeg)*/
+
+	        //计算聚集系数
+	        for(var i = 0; i < countryOrderAdd.length){
+	        	
+	        }
+	        /*console.log("hhhhh");
+	        console.log(countryOrderAdd.length);
+	        console.log("hhhhh");*/
 	        //根据某个属性排序
+
 	        function compare(property){
 			    return function(a,b){
 			        var value1 = a[property];
@@ -419,9 +429,9 @@
 			countryOrderout.sort(compare('degree'));
 			countryOrderSthIn.sort(compare('degree'));
 			countryOrderSthOut.sort(compare('degree'));
-			/*console.log(countryOrderSthIn);
-			console.log(countryOrderSthOut);*/
 			//生成度分布图数据
+
+
 			for(var i = 0; i < countryOrderIn.length; i++){
 				scatterdata_IN.push([i+1,countryOrderIn[i].degree]);
 				AvgInde += countryOrderIn[i].degree;
@@ -441,8 +451,8 @@
 		    for(var i = 0; i < countryOrderout.length; i++){
 				scatterdataSth_Out.push([i+1,countryOrderSthOut[i].degree]);
 			}
-		    console.log(scatterdataSth_IN);
-			console.log(scatterdataSth_Out);
+		    /*console.log(scatterdataSth_IN);
+			console.log(scatterdataSth_Out);*/
 
 	        
 	        //设置节点属性
@@ -455,7 +465,6 @@
 	            };
 	            node.category = GetCategory(node.value);
 	        });
-	        console.log("hhhh")
 	        console.log(countryOrderAdd);
 	        function GetCategory(value){
 	        	var index = 0;
@@ -500,15 +509,12 @@
 	                    source: countryOut[roaddata[i].from],
 	                    target: roaddata[i].to,
 	            });
-	            AvgEdstg += roaddata[i].count;
 	        }
 
 	        EdgesNum = graphdata.link.length;
 	        document.getElementById("EdgesNum").innerHTML = "Edges Num: "+EdgesNum;
 	        MInEdge = roaddata[roadNum-1].count;
 	        document.getElementById("MInEdge").innerHTML = "Min Edge: "+MInEdge;
-	        AvgEdstg /= roadNum;
-	        document.getElementById("AvgEdstg").innerHTML = "Avg Edstg: "+AvgEdstg.toFixed(0);
 	         option = {
 	                    tooltip: {
 	                            show: true, // 默认显示

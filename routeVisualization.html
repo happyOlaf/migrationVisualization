@@ -181,7 +181,7 @@
                 <li><a href="routeVisualization.html" class="active"><span>RouteVisualization</span></a></li>
                 <li><a href="networkAnalysis.html"><span>NetworkAnalysis</span></a></li>
                 <li><a href="EconomyAnalysis.html"><span>EconomyAnalysis</span></a></li>
-                <li><a href="thermalAnalysis.html"><span>ThermalAnalysis</span></a></li>
+                <li><a href="thermalAnalysis.html"><span>HeatAnalysis</span></a></li>
                 <li><a href="Immigrationpolicy.html"><span>Immigrationpolicy</span></a></li>
             </ul>
             <span aria-hidden="true" class="stretchy-nav-bg"></span>
@@ -241,6 +241,7 @@
                 ["China, Hong Kong Special Administrative Region",344,"HK",22.3964,114.1095,"中国香港"],
                 ["Mexico",484,"MX",19.4326,-99.1332,"墨西哥"],
                 ["Brazil",76,"BR",-14.2350,-51.9253,"巴西"],
+                ["Syrian Arab Republic",760,"SY",34.8021,38.9968,"阿拉伯叙利亚共和国"],
                 ["Afghanistan",4,"AF",33.9391,67.7100,"阿富汗"],
                 ["Albania",8,"AL",41.1533,20.1683,"阿尔巴尼亚"],
                 ["Algeria",12,"DZ",28.0339,1.6596,"阿尔及利亚"],
@@ -432,8 +433,7 @@
                 ["Suriname",740,"SR",3.9193,-56.0278,"苏里南"],
                 ["Swaziland",748,"SZ",-26.5225,31.4659,"斯威士兰"],
                 ["Sweden",752,"SE",60.1282,18.6435,"瑞典"],
-                ["Switzerland",756,"CH",46.8182,8.2275,"瑞士"],
-                ["Syrian Arab Republic",760,"SY",34.8021,38.9968,"阿拉伯叙利亚共和国"],
+                ["Switzerland",756,"CH",46.8182,8.2275,"瑞士"],              
                 ["Tajikistan",762,"TJ",38.8610,71.2761,"塔吉克斯坦"],
                 ["Thailand",764,"TH",15.8700,100.9925,"泰国"],
                 ["The former Yugoslav Republic of Macedonia",807,"MK",41.6086,21.7453,"马其顿前南斯拉夫共和国"],
@@ -1013,8 +1013,8 @@
     Drawrightecharts(bardata_out);
     //绘制右侧国家排名图
     function Drawrightecharts(datas){
-        var rightheadtext_in = curyear + ", " + road_in.length + " source countries";
-        var rightheadtext_out = curyear + " , " + road_out.length + " destination countries";
+        var rightheadtext_in = curyear + ", " + road_in.length + " source places";
+        var rightheadtext_out = curyear + " , " + road_out.length + " destination places";
         if (status == "in") {
              document.getElementById('righthead').innerHTML=rightheadtext_in;
         }
