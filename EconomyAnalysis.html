@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+
+<head>
+    <meta charset="utf-8">
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css"> <!-- Resource style -->
+        <link rel="stylesheet" href="assets/css/style.css"> <!-- Resource style -->
+    <script src="assets/js/jquery-2.1.1.min.js"></script>
+    <script src="assets/js/modernizr.js"></script> <!-- Modernizr -->
+    <script src="assets/js/main.js"></script> <!-- Resource jQuery -->
+	
+</head>
+<style>
+		#container2 {
+            position: absolute;
+            top: 770px;
+            height:100px;
+            width: 100%;
+        }
+		#chart{
+			position: absolute;
+            top: 0px;
+            height:650px;
+            width: 100%;
+		
+		}
+        #SelContainer{
+            position: absolute;
+            top:750px;
+            right: 1200px;
+			background-color:#003c5d;
+        }
+        #countrylist{
+			top:750px;
+            width: 200px;
+        }
+</style>
+<body style="background-color:#2c343c;height: 100%; margin: 0;">
+        <nav class="cd-stretchy-nav"style="margin-top:120px;right: 5px;">
+            <a class="cd-nav-trigger" href="#0">
+                <span aria-hidden="true"></span>
+            </a>
+            <ul>
+                <li><a href="index.html"><span>Home</span></a></li>
+                <li><a href="dataVisualization.html"><span>DataVisualization</span></a></li>
+                <li><a href="routeVisualization.html"><span>RouteVisualization</span></a></li>
+                <li><a href="networkAnalysis.html"><span>NetworkAnalysis</span></a></li>
+                <li><a href="EconomyAnalysis.html" class="active"><span>EconomyAnalysis</span></a></li>
+                <li><a href="thermalAnalysis.html"><span>HeatAnalysis</span></a></li>
+                <li><a href="Immigrationpolicy.html"><span>Immigrationpolicy</span></a></li>
+            </ul>
+            <span aria-hidden="true" class="stretchy-nav-bg"></span>
+        </nav>
+    </header>
+    <div id="container" style="height:650px;top:20px;" ></div>
+	
+	<div id="container2"style="margin:0 auto;background-color:#2c343c;">
+		<div id="chart"></div>
+	</div>
+    <div id="SelContainer">
+        <div style="float: right;">
+            <select id="countrylist" class="form-control"style="height: 30px;">
+            </select>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/4.7.0/echarts.min.js"></script>
+    <script type="text/javascript" src="assets/js/dat.gui.js"></script>
+    <script type="text/javascript">
+    var dataSet0 = []; //总数据集
+    //获取某年所有国家GDP数据
+    var yearFlag = 9095;
+    var xAxisFlag = 'GDP';
+    var yAxisFlag = 'NetMigrationRate';
+
+    function getYearData(year) {
+        var dataSet1 = [];
+        //获取GDP数据
+        //console.log(year);
+        //console.log(year.toString());
+        //var str = (year.toString()).substr(2, 2);
+        var str = getGDPyear(year);
+        //console.log(str);
+        $.ajaxSettings.async = false;
+        var url_gdp = "http://localhost:8081/GPD/Year/" + str;
+        $.getJSON(url_gdp, function(geojson) {
+            $.each(geojson, function(i, val) {
+                var temp = new Object();
+                temp.country = val["area"];
+                temp.GDP = (val["gpd"] / 100000000).toFixed(4);
+                //console.log(temp.gdp);
+                dataSet1.push(temp);
+
+            });
+        });
+        //获取人均数据
+        $.ajaxSettings.async = false;
+        var url_pcgdp = 'http://localhost:8081/PerCapitaGDP/Year/' + str;
+        $.getJSON(url_pcgdp, function(geojson) {
+            $.each(geojson, function(i, val) {
+
+                dataSet1[i].GDP_Per_Capita = val["gpd"].toFixed(4);
+                var cty = dataSet1[i].country;
+                var NMRS = getCountryNetMigrationRate(cty, year);
+                if ($.isEmptyObject(NMRS)) {
+                    //console.log(dataSet1[i].country);
+                    dataSet1[i].NetMigrationRate = 0;
+                } else {
+                    dataSet1[i].NetMigrationRate = NMRS.nmr;
+                    //console.log(dataSet1[i]);
+                }
+                var NMS = getCountryNetMigrationNumber(cty, year);
+                if ($.isEmptyObject(NMS)) {
+                    //console.log(dataSet1[i].country);
+                    dataSet1[i].NetMigrationNumber = 0;
+                } else {
+                    dataSet1[i].NetMigrationNumber = NMS.nms;
+                    //console.log(dataSet1[i]);
+                }
+            });
+        })
+        //console.log(dataSet1.length);
+        return dataSet1;
+    };
+
+    function getGDPyear(year) {
+        if (year == '9095') {
+            return '1995'
+        } else if (year == '9500') {
+            return '2000'
+        } else if (year == '0005') {
+            return '2005'
+        } else if (year == '0510') {
+            return '2010'
+        } else if (year == '1015') {
+            return '2015'
+        }
+    }
+
+    //获取某年某国家的净移民率
+    function getCountryNetMigrationRate(country, year) {
+        var tempNMR = new Object();
+
+        //获取净移民率数据
+        $.ajaxSettings.async = false;
+        var url_nmr = 'http://localhost:8081/NetMigrationRate/Area/' + country;
+        $.getJSON(url_nmr, function(geojson) {
+            if ($.isEmptyObject(geojson)) {
+                //console.log('404');
+                return [];
+            } else {
+                str = 'netmigrationrate' + year;
+                $.each(geojson, function(i, val) {
+                    tempNMR.nmr = val[str];
+                    //console.log(tempNMR);
+                });
+            }
+        })
+        return tempNMR;
+    }
+
+    //获取某年某国家的净移民数
+    function getCountryNetMigrationNumber(country, year) {
+        var tempNMS = new Object();
+
+        //获取净移民率数据
+        $.ajaxSettings.async = false;
+        var url_nms = 'http://localhost:8081/NetMigration/Country/' + country;
+        $.getJSON(url_nms, function(geojson) {
+            if ($.isEmptyObject(geojson)) {
+                //console.log('404');
+                return [];
+            } else {
+                str = 'netmigrants' + year;
+                $.each(geojson, function(i, val) {
+                    tempNMS.nms = val[str];
+                    //console.log(tempNMS);
+                });
+            }
+        })
+        return tempNMS;
+    }
+
+    dataSet0 = getYearData(9095);
+    //getCountryNetMigrationRate("Burundi");
+
+
+
+    var app = {};
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var option = {
+        backgroundColor: '#2c343c',
+		title:{
+			text: 'The Relationship between Netmigration and GDP',								
+			left: 'center',
+			textStyle: {
+				color: '#eee',
+				top: 20,
+				fontSize: 20,
+		
+		
+			}
+		},
+        tooltip: {
+
+            padding: 10,
+            backgroundColor: '#222',
+            borderColor: '#777',
+            borderWidth: 1,
+            trigger: 'item',
+            formatter: function(params) {
+                //console.log(params.value[params.dimensionNames[params.encode.y[0]]]);
+                //console.log(params.value['country']);
+                //console.log(params);
+                var cty = params.value['country'];
+                var xaxs = params.value[params.dimensionNames[params.encode.x[0]]];
+                var yaxs = params.value[params.dimensionNames[params.encode.y[0]]];
+                var str = 'Country: ' + cty + '<br/>' + params.dimensionNames[params.encode.x[0]] + ': ' + xaxs + '<br/>' + params.dimensionNames[params.encode.y[0]] + ': ' + yaxs;
+                return str;
+            }
+
+
+        },
+        xAxis: {
+            name: xAxisFlag,
+            splitLine: { show: false },
+            axisLine: {
+                lineStyle: {
+                    color: '#fff'
+                }
+            },
+            axisLabel: {
+                color: '#fff'
+            },
+            axisTick: {
+                lineStyle: {
+                    color: '#fff'
+                }
+            }
+        },
+        yAxis: {
+            name: yAxisFlag,
+            splitLine: { show: false },
+            axisLine: {
+                lineStyle: {
+                    color: '#fff'
+                }
+            },
+            axisLabel: {
+                color: '#fff'
+            },
+            axisTick: {
+                lineStyle: {
+                    color: '#fff'
+                }
+            }
+        },
+        dataset: {
+            // 提供一份数据。
+            source: dataSet0
+        },
+        dataZoom: [{
+                show: true,
+                realtime: true,
+                start: 0,
+                end: 100
+            },
+            {
+                type: 'inside',
+                realtime: true,
+                start: 0,
+                end: 100
+            }
+        ],
+
+        series: [{
+            zlevel: 1,
+            //name: 'nutrients',
+            type: 'scatter',
+            //data: [[1,2],[2,4],[4,8],[3,6]],
+            encode: {
+                //tooltip: ['country','gdp','nmr9095'],
+                //tooltip: ['country', xAxisFlag, yAxisFlag],
+                // 将 "amount" 列映射到 X 轴。
+                x: xAxisFlag,
+                // 将 "product" 列映射到 Y 轴。
+                y: yAxisFlag
+                //y: 'nmr9095'
+            },
+            itemStyle: {
+                color: {
+                    type: 'linear',
+                    x: 0,
+                    y: 0,
+                    x2: 1,
+                    y2: 1,
+                    colorStops: [{
+                        offset: 0,
+                        color: 'rgb(223,90,90)' // 0% 处的颜色
+                    }, 
+                    // {
+                    //     offset: 0.25,
+                    //     color: 'rgb(223,176,90)' // 100% 处的颜色
+                    // }, {
+                    //     offset: 0.5,
+                    //     color: 'rgb(223,148,90)' // 100% 处的颜色
+                    // }, {
+                    //     offset: 0.75,
+                    //     color: 'rgb(223,119,90)' // 100% 处的颜色
+                    // }, 
+                    {
+                        offset: 1,
+                        color: 'rgb(223,119,90)' // 100% 处的颜色
+                    }],
+                    global: false // 缺省为 false
+                }
+            },
+            animationThreshold: 5000,
+            progressiveThreshold: 5000
+        }],
+        animationEasingUpdate: 'cubicInOut',
+        animationDurationUpdate: 2000
+    };
+
+    //创建dat.GUI模块
+    var obj = {
+        year: '9095',
+        xAxis: 'GDP',
+        yAxis: 'NetMigrationRate'
+    };
+
+    var gui = new dat.gui.GUI();
+
+    gui.remember(obj);
+
+    var yearController = gui.add(obj, 'year', ['9095', '9500', '0005', '0510', '1015']);
+    var gdpController = gui.add(obj, 'xAxis', ['GDP', 'GDP_Per_Capita']);
+    var mController = gui.add(obj, 'yAxis', ['NetMigrationRate', 'NetMigrationNumber']);
+    yearController.onChange(function(value) {//监听事件
+        if (value != yearFlag) {
+            console.log(1);
+            dataSet0 = getYearData(value);
+            // myChart.setOption({
+            //     dataset: {
+            //         source: []
+            //     }
+            // });
+            myChart.setOption({
+                dataset: {
+                    // 提供一份数据。
+                    source: dataSet0
+                },
+                series: {
+                    type: 'scatter',
+                    encode: {
+                        //tooltip: ['country', xAxisFlag, yAxisFlag],
+                        x: xAxisFlag,
+                        y: yAxisFlag
+                        //y: 'nmr9095'
+                    },
+                },
+            });
+            yearFlag = value;
+        }
+
+    });
+    gdpController.onChange(function(value) {
+        if (value != xAxisFlag) {
+            xAxisFlag = value;
+            console.log(xAxisFlag);
+            myChart.setOption({
+                dataset: {
+                    // 提供一份数据。
+                    source: dataSet0
+                },
+                xAxis: {
+                    name: xAxisFlag
+                },
+                yAxis: {
+                    name: yAxisFlag
+                },
+                series: {
+                    encode: {
+                        type: 'scatter',
+                        //tooltip: ['country', xAxisFlag, yAxisFlag],
+                        // 将 "amount" 列映射到 X 轴。
+                        x: xAxisFlag,
+                        // 将 "product" 列映射到 Y 轴。
+                        y: yAxisFlag
+                        //y: 'nmr9095'
+                    },
+                }
+            });
+        }
+    });
+    mController.onChange(function(value) {
+        if (value != yAxisFlag) {
+            yAxisFlag = value;
+            console.log(yAxisFlag);
+            myChart.setOption({
+                dataset: {
+                    // 提供一份数据。
+                    source: dataSet0
+                },
+                xAxis: {
+                    name: xAxisFlag
+                },
+                yAxis: {
+                    name: yAxisFlag
+                },
+                series: {
+                    encode: {
+                        type: 'scatter',
+                        //tooltip: ['country', xAxisFlag, yAxisFlag],
+                        // 将 "amount" 列映射到 X 轴。
+                        x: xAxisFlag,
+                        // 将 "product" 列映射到 Y 轴。
+                        y: yAxisFlag
+                        //y: 'nmr9095'
+                    },
+                }
+            });
+        }
+    });
+
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+    </script>
+	
+	
+    
+    <script type="text/javascript">
+    var dom2 = document.getElementById("chart");
+    var myChart2 = echarts.init(dom2);
+    var yAxisFlag1 = 'NetMigrationNumber';
+    var yAxisFlag2 = 'NetMigrationRate';
+    var countryCode = [
+        ["China", 156, "CN", 35.8617, 104.1954, "中国"],
+        ["United States", 840, "US", 37.0902, -95.7129, "美国"],
+        ["Germany", 276, "DE", 51.1657, 10.4515, "德国"],
+        ["France", 250, "FR", 46.2276, 2.2137, "法国"],
+        ["United Kingdom of Great Britain and Northern Ireland", 826, "GB", 55.3781, -3.4360, "英国"],
+        ["Japan", 392, "JP", 36.2048, 138.2529, "日本"],
+        ["Russian Federation", 643, "RU", 61.5240, 105.3188, "俄罗斯"],
+        ["India", 356, "IN", 20.5937, 78.9629, "印度"],
+        ["China, Hong Kong SAR", 344, "HK", 22.3964, 114.1095, "中国香港"],
+        ["Mexico", 484, "MX", 19.4326, -99.1332, "墨西哥"],
+        ["Brazil", 76, "BR", -14.2350, -51.9253, "巴西"],
+        ["Afghanistan", 4, "AF", 33.9391, 67.7100, "阿富汗"],
+        ["Albania", 8, "AL", 41.1533, 20.1683, "阿尔巴尼亚"],
+        ["Algeria", 12, "DZ", 28.0339, 1.6596, "阿尔及利亚"],
+        ["American Samoa", 16, "AS", -14.2710, -170.1322, "美属萨摩亚群岛"],
+        ["Andorra", 20, "AD", 42.5063, 1.5218, "安道尔"],
+        ["Angola", 24, "AO", -11.2027, 17.8739, "安哥拉"],
+        ["Anguilla", 660, "AI", 18.2206, -63.0686, "安圭拉"],
+        ["Antigua and Barbuda", 28, "AG", 17.0608, -61.7964, "安提瓜和巴布达岛"],
+        ["Argentina", 32, "AR", -38.4161, -63.6167, "阿根廷"],
+        ["Armenia", 51, "AM", 40.0691, 45.0382, "亚美尼亚"],
+        ["Aruba", 533, "AW", 12.5211, -69.9683, "阿鲁巴"],
+        ["Australia", 36, "AU", -25.2744, 133.7751, "澳大利亚"],
+        ["Austria", 40, "AT", 47.5162, 14.5501, "奥地利"],
+        ["Azerbaijan", 31, "AZ", 40.1431, 47.5769, "阿塞拜疆"],
+        ["Bahamas", 44, "BS", 25.0343, -77.3963, "巴哈马"],
+        ["Bahrain", 48, "BH", 26.0667, 50.5577, "巴林"],
+        ["Bangladesh", 50, "BD", 23.6850, 90.3563, "孟加拉国"],
+        ["Barbados", 52, "BB", 13.1939, -59.5432, "巴巴多斯"],
+        ["Belarus", 112, "BY", 53.7098, 27.9534, "白俄罗斯"],
+        ["Belgium", 56, "BE", 50.5039, 4.4699, "比利时"],
+        ["Belize", 84, "BZ", 17.1899, -88.4976, "伯利兹"],
+        ["Benin", 204, "BJ", 9.3077, 2.3158, "贝宁"],
+        ["Bermuda", 60, "BM", 32.3078, -64.7505, "百慕大"],
+        ["Bhutan", 64, "BT", 27.5142, 90.4336, "不丹"],
+        ["Bolivia (Plurinational State of)", 68, "BO", -16.2902, -63.5887, "玻利维亚"],
+        ["Bonaire, Sint Eustatius and Saba", 535, "BQ", 12.2019, 68.2624, "博内尔"],
+        ["Bosnia and Herzegovina", 70, "BA", 43.9159, 17.6791, "波斯尼亚和黑塞哥维那"],
+        ["Botswana", 72, "BW", -22.3285, 24.6849, "博茨瓦纳"],
+        ["British Virgin Islands", 92, "VG", 18.4207, -64.6400, "英属维尔京群岛"],
+        ["Brunei Darussalam", 96, "BN", 4.5353, 114.7277, "文莱达鲁萨兰国"],
+        ["Bulgaria", 100, "BG", 42.7339, 25.4858, "保加利亚"],
+        ["Burkina Faso", 854, "BF", 12.2383, -1.5616, "布基纳法索"],
+        ["Burundi", 108, "BI", -3.3731, 29.9189, "布隆迪"],
+        ["Cabo Verde", 132, "CV", 16.5388, 23.0418, "佛得角"],
+        ["Cambodia", 116, "KH", 12.5657, 104.9910, "柬埔寨"],
+        ["Cameroon", 120, "CM", 7.3697, 12.3547, "喀麦隆"],
+        ["Canada", 124, "CA", 56.1304, -106.3468, "加拿大"],
+        ["Cayman Islands", 136, "KY", 19.3133, -81.2546, "开曼群岛"],
+        ["Central African Republic", 140, "CF", 6.6111, 20.9394, "中非共和国"],
+        ["Chad", 148, "TD", 15.4542, 18.7322, "乍得"],
+        ["Channel Islands", 830, "ZZ", 49.2327, 2.2052, "海峡群岛"],
+        ["Chile", 152, "CL", -35.6751, -71.5430, "智利"],
+        ["China, Macao SAR", 446, "MO", 22.1987, 113.5439, "中国澳门"],
+        ["Colombia", 170, "CO", 4.5709, -74.2973, "哥伦比亚"],
+        ["Comoros", 174, "KM", -11.6455, 43.3333, "科摩罗"],
+        ["Congo", 178, "CG", -4.0383, 21.7587, "刚果"],
+        ["Cook Islands", 184, "CK", -21.2367, -159.7777, "库克群岛"],
+        ["Costa Rica", 188, "CR", 9.9281, -84.0907, "哥斯达黎加"],
+        ["Cote d'Ivoire", 384, "CI", 7.5400, -5.5471, "科特迪瓦"],
+        ["Croatia", 191, "HR", 45.1000, 15.2000, "克罗地亚"],
+        ["Cuba", 192, "CU", 21.5218, -77.7812, "古巴"],
+        ["Curacao", 531, "CW", 12.1696, -68.9900, "库拉索岛"],
+        ["Cyprus", 196, "CY", 35.1264, 33.4299, "塞浦路斯"],
+        ["Czech Republic", 203, "CZ", 49.8175, 15.4730, "捷克"],
+        ["Democratic People's Republic of Korea", 408, "KP", 40.3399, 127.5101, "朝鲜"],
+        ["Democratic Republic of the Congo", 180, "CD", -4.0383, 21.7587, "民主刚果"],
+        ["Denmark", 208, "DK", 56.2639, 9.5018, "丹麦"],
+        ["Djibouti", 262, "DJ", 11.8251, 42.5903, "吉布提"],
+        ["Dominica", 212, "DM", 15.4150, -61.3710, "多米尼加"],
+        ["Dominican Republic", 214, "DO", 18.7357, -70.1627, "多明尼加共和国"],
+        ["Ecuador", 218, "EC", -1.8312, -78.1834, "厄瓜多尔"],
+        ["Egypt", 818, "EG", 26.8206, 30.8025, "埃及"],
+        ["El Salvador", 222, "SV", 13.7942, -88.8965, "萨尔瓦多"],
+        ["Equatorial Guinea", 226, "GQ", 1.6508, 10.2679, "赤道几内亚"],
+        ["Eritrea", 232, "ER", 15.1794, 39.7823, "厄立特里亚"],
+        ["Estonia", 233, "EE", 58.5953, 25.0136, "爱沙尼亚"],
+        ["Ethiopia", 231, "ET", 9.1450, 40.4897, "埃塞俄比亚"],
+        ["Faeroe Islands", 234, "FO", 61.8926, -6.9118, "法罗群岛"],
+        ["Falkland Islands (Malvinas)", 238, "FK", -51.7963, -59.5236, "福克兰群岛"],
+        ["Fiji", 242, "FJ", -17.7134, 178.0650, "斐济"],
+        ["Finland", 246, "FI", 61.9241, 25.7482, "芬兰"],
+        ["French Guiana", 254, "GF", 3.9339, 53.1258, "法属圭亚那"],
+        ["French Polynesia", 258, "PF", -17.6797, -149.4068, "法属玻里尼西亚"],
+        ["Gabon", 266, "GA", -0.8037, 11.6094, "加蓬"],
+        ["Gambia", 270, "GM", 13.4432, -15.3101, "冈比亚"],
+        ["Georgia", 268, "GE", 42.3154, 43.3569, "格鲁吉亚"],
+        ["Ghana", 288, "GH", 7.9465, -1.0232, "加纳"],
+        ["Gibraltar", 292, "GI", 36.1408, -5.3536, "直布罗陀"],
+        ["Greece", 300, "GR", 39.0742, 21.8243, "希腊"],
+        ["Greenland", 304, "GL", 71.7069, -42.6043, "格陵兰岛"],
+        ["Grenada", 308, "GD", 12.1165, -61.6790, "格林纳达"],
+        ["Guadeloupe", 312, "GP", 16.2650, 61.5510, "瓜德罗普岛"],
+        ["Guam", 316, "GU", 13.4443, 144.7937, "关岛"],
+        ["Guatemala", 320, "GT", 14.6349, -90.5069, "危地马拉"],
+        ["Guinea", 324, "GN", 9.9456, -9.6966, "几内亚"],
+        ["Guinea-Bissau", 624, "GW", 11.8037, -15.1804, "几内亚比绍"],
+        ["Guyana", 328, "GY", 4.8604, -58.9302, "圭亚那"],
+        ["Haiti", 332, "HT", 18.9712, -72.2852, "海地"],
+        ["Holy See", 336, "VA", 41.9029, 12.4534, "梵蒂冈"],
+        ["Honduras", 340, "HN", 15.2000, -86.2419, "洪都拉斯"],
+        ["Hungary", 348, "HU", 47.1625, 19.5033, "匈牙利"],
+        ["Iceland", 352, "IS", 64.9631, -19.0208, "冰岛"],
+        ["Indonesia", 360, "ID", -0.7893, 113.9213, "印度尼西亚"],
+        ["Iran (Islamic Republic of)", 364, "IR", 32.4279, 53.6880, "伊朗"],
+        ["Iraq", 368, "IQ", 33.2232, 43.6793, "伊拉克"],
+        ["Ireland", 372, "IE", 53.1424, -7.6921, "爱尔兰"],
+        ["Isle of Man", 833, "IM", 54.2361, -4.5481, "英属地曼岛"],
+        ["Israel", 376, "IL", 31.0461, 34.8516, "以色列"],
+        ["Italy", 380, "IT", 41.8719, 12.5674, "意大利"],
+        ["Jamaica", 388, "JM", 18.1096, -77.2975, "牙买加"],
+        ["Jordan", 400, "JO", 30.5852, 36.2384, "约旦"],
+        ["Kazakhstan", 398, "KZ", 48.0196, 66.9237, "哈萨克斯坦"],
+        ["Kenya", 404, "KE", -0.0236, 37.9062, "肯尼亚"],
+        ["Kiribati", 296, "KI", -3.3704, 168.7340, "基里巴斯"],
+        ["Kuwait", 414, "KW", 29.3759, 47.9774, "科威特"],
+        ["Kyrgyzstan", 417, "KG", 41.2044, 74.7661, "吉尔吉斯斯坦"],
+        ["Lao People's Democratic Republic", 418, "LA", 19.8563, 102.4955, "老挝"],
+        ["Latvia", 428, "LV", 56.8796, 24.6032, "拉脱维亚"],
+        ["Lebanon", 422, "LB", 33.8547, 35.8623, "黎巴嫩"],
+        ["Lesotho", 426, "LS", -29.6100, 28.2336, "莱索托"],
+        ["Liberia", 430, "LR", 6.4281, -9.4295, "利比里亚"],
+        ["Libya", 434, "LY", 26.3351, 17.2283, "利比亚"],
+        ["Liechtenstein", 438, "LI", 47.1660, 9.5554, "列支敦斯登"],
+        ["Lithuania", 440, "LT", 55.1694, 23.8813, "立陶宛"],
+        ["Luxembourg", 442, "LU", 49.6116, 6.1319, "卢森堡"],
+        ["Madagascar", 450, "MG", -18.7669, 46.8691, "马达加斯加"],
+        ["Malawi", 454, "MW", -13.2543, 34.3015, "马拉维"],
+        ["Malaysia", 458, "MY", 4.2105, 101.9758, "马来西亚"],
+        ["Maldives", 462, "MV", 3.2028, 73.2207, "马尔代夫"],
+        ["Mali", 466, "ML", 17.5707, -3.9962, "马里"],
+        ["Malta", 470, "MT", 35.9375, 14.3754, "马耳他"],
+        ["Marshall Islands", 584, "MH", 7.1315, 171.1845, "马绍尔群岛"],
+        ["Martinique", 474, "MQ", 14.6415, 61.0242, "马提尼克"],
+        ["Mauritania", 478, "MR", 21.0079, 10.9408, "毛里塔尼亚"],
+        ["Mauritius", 480, "MU", -20.3484, 57.5522, "毛里求斯"],
+        ["Mayotte", 175, "YT", -12.8275, 45.1662, "马约特岛"],
+        ["Micronesia (Federated States of)", 583, "FM", 7.4256, 150.5508, "密克罗尼西亚"],
+        ["Monaco", 492, "MC", 43.7384, 7.4246, "摩纳哥"],
+        ["Mongolia", 496, "MN", 46.8625, 103.8467, "蒙古"],
+        ["Montenegro", 499, "ME", 42.7087, 19.3744, "黑山"],
+        ["Montserrat", 500, "MS", 16.7425, -62.1874, "蒙特色拉特岛"],
+        ["Morocco", 504, "MA", 31.7917, -7.0926, "摩洛哥"],
+        ["Mozambique", 508, "MZ", -18.6657, 35.5296, "莫桑比克"],
+        ["Myanmar", 104, "MM", 21.9162, 95.9560, "缅甸"],
+        ["Namibia", 516, "NA", -22.9576, 18.4904, "纳米比亚"],
+        ["Nauru", 520, "NR", -0.5228, 166.9315, "瑙鲁"],
+        ["Nepal", 524, "NP", 28.3949, 84.1240, "尼泊尔"],
+        ["Netherlands", 528, "NL", 52.1326, 5.2913, "荷兰"],
+        ["New Caledonia", 540, "NC", -20.9043, 165.6180, "新喀里多尼亚"],
+        ["New Zealand", 554, "NZ", -40.9006, 174.8860, "新西兰"],
+        ["Nicaragua", 558, "NI", 12.8654, -85.2072, "尼加拉瓜"],
+        ["Niger", 562, "NE", 17.6078, 8.0817, "尼日尔"],
+        ["Nigeria", 566, "NG", 9.0820, 8.6753, "尼日利亚"],
+        ["Niue", 570, "NU", -19.0544, -169.8672, "纽埃"],
+        ["Northern Mariana Islands", 580, "MP", 15.0979, 145.6739, "北马里亚纳群岛"],
+        ["Norway", 578, "NO", 60.4720, 8.4689, "挪威"],
+        ["Oman", 512, "OM", 21.4735, 55.9754, "阿曼"],
+        ["Pakistan", 586, "PK", 30.3753, 69.3451, "巴基斯坦"],
+        ["Palau", 585, "PW", 7.5150, 134.5825, "帕劳"],
+        ["Panama", 591, "PA", 8.9824, -79.5199, "巴拿马"],
+        ["Papua New Guinea", 598, "PG", -6.3150, 143.9555, "巴布亚新几内亚"],
+        ["Paraguay", 600, "PY", -23.4425, -58.4438, "巴拉圭"],
+        ["Peru", 604, "PE", -9.1900, -75.0152, "秘鲁"],
+        ["Philippines", 608, "PH", 12.8797, 121.7740, "菲律宾"],
+        ["Poland", 616, "PL", 51.9194, 19.1451, "波兰"],
+        ["Portugal", 620, "PT", 39.3999, -8.2245, "葡萄牙"],
+        ["Puerto Rico", 630, "PR", 18.2208, -66.5901, "波多黎各"],
+        ["Qatar", 634, "QA", 25.3548, 51.1839, "卡塔尔"],
+        ["Republic of Korea", 410, "KR", 35.9078, 127.7669, "韩国"],
+        ["Republic of Moldova", 498, "MD", 47.4116, 28.3699, "摩尔多瓦共和国"],
+        ["Réunion", 638, "RE", 21.1151, 55.5364, "留尼汪"],
+        ["Romania", 642, "RO", 45.9432, 24.9668, "罗马尼亚"],
+        ["Rwanda", 646, "RW", -1.9403, 29.8739, "卢旺达"],
+        ["Saint Helena", 654, "SH", -15.9333, -5.7167, "圣赫勒拿"],
+        ["Saint Kitts and Nevis", 659, "KN", 17.3578, -62.7830, "圣基茨与尼维斯联邦"],
+        ["Saint Lucia", 662, "LC", 13.9094, -60.9789, "圣露西亚"],
+        ["Saint Pierre and Miquelon", 666, "PM", 46.7758, -56.1806, "圣皮埃尔和密克隆群岛"],
+        ["Saint Vincent and the Grenadines", 670, "VC", 12.9843, -61.2872, "圣文森特和格林纳丁斯"],
+        ["Samoa", 882, "WS", -13.7590, -172.1046, "萨摩亚"],
+        ["San Marino", 674, "SM", 43.9356, 12.4473, "圣马力诺"],
+        ["Sao Tome and Principe", 678, "ST", 0.1864, 6.6131, "圣多美和普林西比"],
+        ["Saudi Arabia", 682, "SA", 23.8859, 45.0792, "沙特阿拉伯"],
+        ["Senegal", 686, "SN", 14.4974, -14.4524, "塞内加尔"],
+        ["Serbia", 688, "RS", 44.0165, 21.0059, "塞尔维亚"],
+        ["Seychelles", 690, "SC", -4.6796, 55.4920, "塞舌尔"],
+        ["Sierra Leone", 694, "SL", 8.4606, -11.7799, "塞拉利昂"],
+        ["Singapore", 702, "SG", 1.3521, 103.8198, "新加坡"],
+        ["Sint Maarten (Dutch part)", 534, "SX", 18.0167, -63.0333, "荷属圣马丁"],
+        ["Slovakia", 703, "SK", 48.6690, 19.6990, "斯洛伐克"],
+        ["Slovenia", 705, "SI", 46.1512, 14.9955, "斯洛文尼亚"],
+        ["Solomon Islands", 90, "SB", -9.6457, 160.1562, "所罗门群岛"],
+        ["Somalia", 706, "SO", 5.1521, 46.1996, "索马里"],
+        ["South Africa", 710, "ZA", -30.5595, 22.9375, "南非"],
+        ["South Sudan", 728, "SS", 6.8770, 31.3070, "南苏丹"],
+        ["Spain", 724, "ES", 40.4637, -3.7492, "西班牙"],
+        ["Sri Lanka", 144, "LK", 7.8731, 80.7718, "斯里兰卡"],
+        ["State of Palestine", 275, "PS", 31.9522, 35.2332, "巴勒斯坦国"],
+        ["Sudan", 729, "SD", 12.8628, 30.2176, "苏丹"],
+        ["Suriname", 740, "SR", 3.9193, -56.0278, "苏里南"],
+        ["Swaziland", 748, "SZ", -26.5225, 31.4659, "斯威士兰"],
+        ["Sweden", 752, "SE", 60.1282, 18.6435, "瑞典"],
+        ["Switzerland", 756, "CH", 46.8182, 8.2275, "瑞士"],
+        ["Syrian Arab Republic", 760, "SY", 34.8021, 38.9968, "阿拉伯叙利亚共和国"],
+        ["Tajikistan", 762, "TJ", 38.8610, 71.2761, "塔吉克斯坦"],
+        ["Thailand", 764, "TH", 15.8700, 100.9925, "泰国"],
+        ["The former Yugoslav Republic of Macedonia", 807, "MK", 41.6086, 21.7453, "马其顿前南斯拉夫共和国"],
+        ["Timor-Leste", 626, "TL", -8.8742, 125.7275, "东帝汶"],
+        ["Togo", 768, "TG", 8.6195, 0.8248, "多哥"],
+        ["Tokelau", 772, "TK", -9.2002, -171.8484, "托克劳群岛"],
+        ["Tonga", 776, "TO", -21.1790, -175.1982, "汤加"],
+        ["Trinidad and Tobago", 780, "TT", 10.6918, -61.2225, "特立尼达和多巴哥"],
+        ["Tunisia", 788, "TN", 33.8869, 9.5375, "突尼斯"],
+        ["Turkey", 792, "TR", 38.9637, 35.2433, "土耳其"],
+        ["Turkmenistan", 795, "TM", 38.9697, 59.5563, "土库曼斯坦"],
+        ["Turks and Caicos Islands", 796, "TC", 21.6940, -71.7979, "特克斯和凯科斯群岛"],
+        ["Tuvalu", 798, "TV", -7.1095, 177.6493, "图瓦卢"],
+        ["Uganda", 800, "UG", 1.3733, 32.2903, "乌干达"],
+        ["Ukraine", 804, "UA", 48.3794, 31.1656, "乌克兰"],
+        ["United Arab Emirates", 784, "AE", 23.4241, 53.8478, "阿联酋"],
+        ["United Republic of Tanzania", 834, "TZ", -6.3690, 34.8888, "坦桑尼亚联合共和国"],
+        ["United States Virgin Islands", 850, "VI", 18.3358, -64.8963, "美属维尔京群岛"],
+        ["Uruguay", 858, "UY", -32.5228, -55.7658, "乌拉圭"],
+        ["Uzbekistan", 860, "UZ", 41.3775, 64.5853, "乌兹别克斯坦"],
+        ["Vanuatu", 548, "VU", -15.3767, 166.9592, "瓦努阿图"],
+        ["Venezuela (Bolivarian Republic of)", 862, "VE", 6.4238, -66.5897, "委内瑞拉"],
+        ["Viet Nam", 704, "VN", 14.0583, 108.2772, "越南"],
+        ["Wallis and Futuna Islands", 876, "WF", -14.2938, -178.1165, "瓦利斯群岛和富图纳群岛"],
+        ["Western Sahara", 732, "EH", 24.2155, -12.8858, "西撒哈拉"],
+        ["Yemen", 887, "YE", 15.5527, 48.5164, "也门"],
+        ["Zambia", 894, "ZM", -13.1339, 27.8493, "赞比亚"],
+        ["Zimbabwe", 716, "ZW", -19.0154, 29.1549, "津巴布韦"]
+    ];
+    var niw = "";
+    var curCountry = "";
+    var dataSet2 = [];//折线图数据集
+    for (var i = 0; i < countryCode.length; i++) {
+        niw += '<option>' + countryCode[i][5] + '|' + countryCode[i][0] + '</option>';
+    }
+    countrylist.innerHTML = niw;
+    $("#countrylist").change(function() {
+        val = $('option:selected', '#countrylist').index();
+        curCountry = countryCode[val][0];
+        dataSet2 = getCountryData(curCountry);
+        if ($.isEmptyObject(dataSet2)) { console.log("Thie Country has no data.") } else {
+            myChart2.setOption({
+                dataset: {
+                    // 提供一份数据。
+                    source: dataSet2
+                },
+                series: {
+                    name: yAxisFlag1,
+                    type: 'line',
+                    encode: {
+                        x: 'period',
+                        y: 'yAxisFlag1'
+                    },
+                    smooth: true
+                }
+            });
+        }
+    });
+
+    function getCountryData(country) {
+        console.log(country);
+        var dataSet1 = [];
+        var temp1 = new Object();
+        var temp2 = new Object();
+        var temp3 = new Object();
+        var temp4 = new Object();
+        var temp5 = new Object();
+        var url_nmr = 'http://localhost:8081/NetMigrationRate/Area/' + country;
+        var url_nms = 'http://localhost:8081/NetMigration/Country/' + country;
+        $.ajaxSettings.async = false;
+        $.getJSON(url_nms, function(geojson) {
+            if ($.isEmptyObject(geojson)) {
+                console.log("cty:" + country + "nms");
+                return []
+
+            } else {
+                $.each(geojson, function(i, val) {
+                    temp1.period = '1990-1995';
+                    temp2.period = '1995-2000';
+                    temp3.period = '2000-2005';
+                    temp4.period = '2005-2010';
+                    temp5.period = '2010-2015';
+                    temp1.NetMigrationNumber = val["netmigrants9095"];
+                    temp2.NetMigrationNumber = val["netmigrants9500"];
+                    temp3.NetMigrationNumber = val["netmigrants0005"];
+                    temp4.NetMigrationNumber = val["netmigrants0510"];
+                    temp5.NetMigrationNumber = val["netmigrants1015"];
+                });
+            }
+        });
+        // $.getJSON(url_nmr, function(geojson) {
+        //     if ($.isEmptyObject(geojson)) {
+        //         console.log("cty:" + country + "nmr");
+        //         return []
+
+        //     } else {
+        //         $.each(geojson, function(i, val) {
+        //             temp1.NetMigrationRate = val["netmigrationrate9095"];
+        //             temp2.NetMigrationRate = val["netmigrationrate9500"];
+        //             temp3.NetMigrationRate = val["netmigrationrate0005"];
+        //             temp4.NetMigrationRate = val["netmigrationrate0510"];
+        //             temp5.NetMigrationRate = val["netmigrationrate1015"];
+
+
+        //         });
+        //     }
+        // });
+        dataSet1.push(temp1);
+        dataSet1.push(temp2);
+        dataSet1.push(temp3);
+        dataSet1.push(temp4);
+        dataSet1.push(temp5);
+
+        console.log(dataSet1);
+        return dataSet1;
+    };
+
+    function initializeData() {
+        curCountry = "China";
+        dataSet2 = getCountryData(curCountry);
+    }
+    initializeData();
+    option = null;
+    option = {
+        backgroundColor: '#2c343c',
+		title:{
+			text: 'Netmigrationnumber in Different Countries',								
+			left: 'center',
+			textStyle: {
+				color: '#eee',
+				top: 30,
+				fontSize: 20,
+		
+		
+			}
+		},
+        // legend: {
+        //     data: [yAxisFlag1, yAxisFlag2],
+        //     textStyle: {
+        //         color: "#B4B4B4"
+        //     },
+        //     top: "7%"
+        // },
+        xAxis: {
+            name: 'period',
+            axisLine: {
+                symbol:['none','arrow'],
+                lineStyle: {
+                    color: '#fff'
+                }
+            },
+            axisTick: {
+                lineStyle: {
+                    color: '#fff'
+                }
+            },
+            type: 'category',
+        },
+        yAxis: {
+            name: 'NetMigrationNumber(k)',
+            //splitLine: { show: false },
+            axisLine: {
+                symbol:['none','arrow'],
+                lineStyle: {
+                    color: '#fff'
+                }
+            },
+            axisTick: {
+                lineStyle: {
+                    color: '#fff'
+                }
+            },
+            type: 'value'
+        },
+        tooltip: {
+            padding: 10,
+            backgroundColor: '#222',
+            borderColor: '#777',
+            borderWidth: 1,
+            trigger: 'item',
+            formatter: function(params) {
+                //console.log(params.value[params.dimensionNames[params.encode.y[0]]]);
+                //console.log(params.value['country']);
+                //console.log(params);
+                var period = params.value['period'];
+                //var xaxs = params.value[params.dimensionNames[params.encode.x[0]]];
+                var yaxs = params.value[params.dimensionNames[params.encode.y[0]]];
+                var str = 'period: ' + period + '<br/>' + params.dimensionNames[params.encode.y[0]] + ': ' + yaxs;
+                return str;
+            }
+
+        },
+        dataset: {
+            source: dataSet2
+        },
+        series: {
+            name: yAxisFlag1,
+            //dimensions: ['period', 'NetMigrationRate', 'NetMigrationNumber'],
+            type: 'line',
+            x: 'period',
+            y: 'NetMigrationNumber',
+            //tooltip: ['country', '\n', 'period', '\n', 'yAxisFlag1'],
+            smooth: true
+        }
+    };;
+    if (option && typeof option === "object") {
+        myChart2.setOption(option, true);
+    }
+    </script>
+</body>
+
+</html>

@@ -13,10 +13,30 @@
 	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">  
 	<script src="assets/js/jquery.pagination.min.js"></script>	
 	<script src="assets/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css"> <!-- Resource style -->
+    <script src="assets/js/modernizr.js"></script> <!-- Modernizr -->
+    <script src="assets/js/main.js"></script> <!-- Resource jQuery -->
 	
 </head>
 
 <body style="background-color: black;">  <!-- 背景颜色在19，20，21，22，36行 -->
+        <header>
+        <nav class="cd-stretchy-nav">
+            <a class="cd-nav-trigger" href="#0">
+                <span aria-hidden="true"></span>
+            </a>
+            <ul>
+                <li><a href="index.html"><span>Home</span></a></li>
+                <li><a href="dataVisualization.html"><span>DataVisualization</span></a></li>
+                <li><a href="routeVisualization.html"><span>RouteVisualization</span></a></li>
+                <li><a href="networkAnalysis.html"><span>NetworkAnalysis</span></a></li>
+                <li><a href="EconomyAnalysis.html" ><span>EconomyAnalysis</span></a></li>
+                <li><a href="thermalAnalysis.html"class="active"><span>HeatAnalysis</span></a></li>
+                <li><a href="Immigrationpolicy.html"><span>Immigrationpolicy</span></a></li>
+            </ul>
+            <span aria-hidden="true" class="stretchy-nav-bg"></span>
+        </nav>
+    </header>
 	<div id="main01" style="width: 1450px;height:750px;margin: 0 auto;background-color: black;"></div>
 	<div id="main02" style="width: 1450px;height:450px;margin: 10px auto;background-color: black;"></div>
 	<div style="position:absolute;top:1220px;right:2.5%;width: 1450px;height:400px;border-radius: 10px;background-color:  black;">
@@ -30,18 +50,18 @@
     <div id="container" style= "width: 1450px;height: 600px;right:-2.2%;margin: 0 auto;background-color: black;" ></div>
 
         <!-- 模态框（Modal） -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog" >
-		<div class="modal-content" style="width: 150%;margin:0 auto; background-color: rgba(255,255,255,0.7);">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h4 class="modal-title" id="myModalLabel" style="color:#fff700;"></h4>
-			</div>
-			<div class="table" id = "myModalBody" style="background-color: rgba(255,255,255,0.7);"></div><!-- 中间的新闻列表 -->
-			<div class="pagination" style="background-color: rgba(255,255,255,0.7);"></div><!-- 翻页 -->
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" >
+			<div class="modal-content" style="width: 150%;margin:0 auto; background-color: rgba(255,255,255,0.7);">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title" id="myModalLabel" style="color:#fff700;"></h4>
+				</div>
+				<div class="table" id = "myModalBody" style="background-color: rgba(255,255,255,0.7);"></div><!-- 中间的新闻列表 -->
+				<div class="pagination" style="background-color: rgba(255,255,255,0.7);"></div><!-- 翻页 -->
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 
         <script type="text/javascript">
 
@@ -490,8 +510,8 @@
 						DrawPie(curyday);
 					});
 					function DrawLine(curyear){
-						days =[];
-						days_num = [];
+                        days =[];
+                        days_num = [];
 						$.ajax({  
 			                //请求方式  
 			                type:"GET",
@@ -599,10 +619,10 @@
 						}
 
 						function DrawPie(curyear){
-							topwords = [];
-							top_num = [];
-							risingwords = [];
-							rising_num = [];
+                            topwords = [];
+                            top_num = [];
+                            risingwords = [];
+                            rising_num = [];
 							$.ajax({  
 				                //请求方式  
 				                type:"GET",

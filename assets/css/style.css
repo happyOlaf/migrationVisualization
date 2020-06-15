@@ -209,10 +209,16 @@ Stretchy Nav style - common to:
   background-position: -48px 0;
 }
 .cd-stretchy-nav ul li:nth-of-type(4) a::after {
-  background-position: 0 0;
+  background-position: -48px 0;
 }
 .cd-stretchy-nav ul li:nth-of-type(5) a::after {
+  background-position: 0 0;
+}
+.cd-stretchy-nav ul li:nth-of-type(6) a::after {
   background-position: -16px 0;
+}
+.cd-stretchy-nav ul li:nth-of-type(7) a::after {
+  background-position: -48px 0;
 }
 .cd-stretchy-nav ul span {
   /* navigation item labels */
