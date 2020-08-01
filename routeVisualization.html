@@ -9,6 +9,7 @@
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>  
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">   
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<link href="https://api.mapbox.com/styles/v1/sunhhh/ckdb7t8901x4k1ips0gr58zi8" />
     <script type="text/javascript" src="assets/mapboxgl/include-web.js"></script>
     <script type="text/javascript" include="mapv" src="assets/mapboxgl/include-mapboxgl.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts/4.7.0/echarts.min.js"></script>
@@ -62,12 +63,13 @@
             color: gray;
         }
 
-        .sidbear-toggle {
+       
+		.sidbear-toggle {
             position: absolute;
-            width: 1em;
-            height: 1em;
+            width: 1.3em;
+            height: 1.4em;
             overflow: visible;
-            display: flex;
+            
             justify-content: center;
             align-items: center;
             text-align: center;
@@ -98,7 +100,7 @@
             border-radius: 10px;
             box-shadow: 0 0 50px -25px black;
             border: 1px solid;
-            background-color: rgba(0,0,0,0.7);
+            background-color: rgba(0,0,0,0.8);
         }
         .left.collapsed {
             transform: translateX(-355px);
@@ -149,8 +151,8 @@
         #Rightcharts1{
             position:absolute;
             width:340px;
-            height:520px;
-            margin-top: 50px;
+            height:560px;
+            margin-top: 40px;
         }
 </style>
 
@@ -205,8 +207,9 @@
     <div id="right" class="sidebar flex-center right collapsed">
         <div class="sidebar-content rounded-rect flex-center">
             <div class="sidbear-toggle rounded-rect right"
-                onclick="toggleSidebar('right')">
-                &laquo;
+                onclick="toggleSidebar('right')"><!-- &laquo; -->
+                
+				&laquo;
             </div>
             <div id="righthead"></div>
             <div id="Rightcharts1">
@@ -216,10 +219,12 @@
 <script src="assets/js/worldjson.js"></script>
 <script type="text/javascript">
     //加载底图
-    mapboxgl.accessToken = 'pk.eyJ1IjoidmFjdXRpY2UiLCJhIjoiY2p1cjRjdTRtMGQzcTQzbzh5b3N6MHZociJ9.F-S59qE0_6QW3XdgxZk14Q';
-    var map = new mapboxgl.Map({
+    //mapboxgl.accessToken = 'pk.eyJ1IjoidmFjdXRpY2UiLCJhIjoiY2p1cjRjdTRtMGQzcTQzbzh5b3N6MHZociJ9.F-S59qE0_6QW3XdgxZk14Q';
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3VuaGhoIiwiYSI6ImNrOHYydDcxaDA2Y2QzZ3ByNHhxaHRwNnUifQ.EY5JFYPs7LPFTtv0kmBKvw';
+	var map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/dark-v9',
+        //style: 'mapbox://styles/mapbox/dark-v9',
+		style: 'mapbox://styles/sunhhh/ckdb7t8901x4k1ips0gr58zi8',
         center: [112, 37.94],
         zoom: 2,
         attributionControl:false,
@@ -1058,12 +1063,13 @@
                     moveOnMouseMove:true,
                     moveOnMouseWheel:true,
                 },
-                {
+                /*{
                     type: 'slider',
                     yAxisIndex: 0,
                     filterMode: 'empty',
                     zoomLock:true,
-                },
+                
+                },*/
             ],
           grid: {
             borderWidth: 0,
