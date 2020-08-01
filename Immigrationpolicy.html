@@ -28,7 +28,7 @@
 	margin-left: 60%;
 	font-family: sans-serif;
 	overflow-y: scroll;
-	background-color: #000000;
+	background-color: rgba(0,0,0,0.8);
 	}
 	
 	section {
@@ -53,13 +53,13 @@
                 <span aria-hidden="true"></span>
             </a>
             <ul>
-                <li><a href="index.html"><span style="color: black;">Home</span></a></li>
-                <li><a href="dataVisualization.html"><span style="color: black;">DataVisualization</span></a></li>
-                <li><a href="routeVisualization.html"><span style="color: black;">RouteVisualization</span></a></li>
-                <li><a href="networkAnalysis.html"><span style="color: black;">NetworkAnalysis</span></a></li>
-                <li><a href="EconomyAnalysis.html" ><span style="color: black;">EconomyAnalysis</span></a></li>
-                <li><a href="thermalAnalysis.html"><span style="color: black;">HeatAnalysis</span></a></li>
-                <li><a href="Immigrationpolicy.html" class="active"><span style="color: black;">Immigrationpolicy</span></a></li>
+                <li><a href="index.html"><span style="color: white;">Home</span></a></li>
+                <li><a href="dataVisualization.html"><span style="color: white;">DataVisualization</span></a></li>
+                <li><a href="routeVisualization.html"><span style="color: white;">RouteVisualization</span></a></li>
+                <li><a href="networkAnalysis.html"><span style="color: white;">NetworkAnalysis</span></a></li>
+                <li><a href="EconomyAnalysis.html" ><span style="color: white;">EconomyAnalysis</span></a></li>
+                <li><a href="thermalAnalysis.html"><span style="color: white;">HeatAnalysis</span></a></li>
+                <li><a href="Immigrationpolicy.html" class="active"><span style="color: white;">Immigrationpolicy</span></a></li>
             </ul>
             <span aria-hidden="true" class="stretchy-nav-bg"></span>
         </nav>
@@ -111,7 +111,7 @@
 	mapboxgl.accessToken = 'pk.eyJ1IjoiMTgzODI0ZHl0IiwiYSI6ImNqbHExNDVjZzI0ZmUza2wxMDhocnlyem4ifQ.FZoJzmqTtli8hAvvAc1OPA';
 	var map = new mapboxgl.Map({
 	container: 'map',
-	style: 'mapbox://styles/mapbox/streets-v9',
+	style: 'mapbox://styles/mapbox/dark-v10',
 	center: tem['chapters0'].center,
 	zoom: tem['chapters0'].zoom,
 	// bearing: 27,
@@ -169,10 +169,10 @@ function isElementOnScreen(id) {
 	<script type="text/javascript">
 		$.each(title,function(i,n){
 			if(i==0){
-            $("#features").append("<section id=\"chapters"+i+"\" class=\"active\"><h31 style=\"color: #fff; font-size: 20px;\">"+n+"</h31><h4>"+Month[i]+",  "+Country[i]+"</h4><p>&nbsp&nbsp&nbsp&nbsp"+contain[i]+"</p>");
+            $("#features").append("<section id=\"chapters"+i+"\" class=\"active\"><h31 style=\"color: #F2F2F2; font-weight: bold; font-size: 20px;\">"+n+"</h31><h4 style=\"color: #FFD700; font-size: 16px;\">"+Month[i]+",  "+Country[i]+"</h4><p style=\"color: #DCDCDC; font-family: Georgia; font-size: 14px;\">"+contain[i]+"</p>");
         	}
         	else{
-        		$("#features").append("<section id=\"chapters"+i+"\"><h31 style='color: #fff; font-size: 20px;'>"+n+"</h31><h4>"+Month[i]+",  "+Country[i]+"</h4><p>&nbsp&nbsp&nbsp&nbsp"+contain[i]+"</p>");
+        		$("#features").append("<section id=\"chapters"+i+"\"><h31 style='color: #F2F2F2; font-weight: bold; font-size: 20px;'>"+n+"</h31><h4 style=\"color: #FFD700; font-size: 16px;\">"+Month[i]+",  "+Country[i]+"</h4><p style=\"color: #DCDCDC; font-family: Georgia; font-size: 14px;\">"+contain[i]+"</p>");
         	}
         }); 
 	</script>
