@@ -28,8 +28,9 @@
 	margin-left: 60%;
 	font-family: sans-serif;
 	overflow-y: scroll;
-	background-color: #fafafa;
+	background-color: #000000;
 	}
+	
 	section {
 	padding: 25px 50px;
 	line-height: 25px;
@@ -168,10 +169,10 @@ function isElementOnScreen(id) {
 	<script type="text/javascript">
 		$.each(title,function(i,n){
 			if(i==0){
-            $("#features").append("<section id=\"chapters"+i+"\" class=\"active\"><h3>"+n+"</h3><h4>"+Month[i]+",  "+Country[i]+"</h4><p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+contain[i]+"</p>");
+            $("#features").append("<section id=\"chapters"+i+"\" class=\"active\"><h31 style=\"color: #fff; font-size: 20px;\">"+n+"</h31><h4>"+Month[i]+",  "+Country[i]+"</h4><p>&nbsp&nbsp&nbsp&nbsp"+contain[i]+"</p>");
         	}
         	else{
-        		$("#features").append("<section id=\"chapters"+i+"\"><h3>"+n+"</h3><h4>"+Month[i]+",  "+Country[i]+"</h4><p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+contain[i]+"</p>");
+        		$("#features").append("<section id=\"chapters"+i+"\"><h31 style='color: #fff; font-size: 20px;'>"+n+"</h31><h4>"+Month[i]+",  "+Country[i]+"</h4><p>&nbsp&nbsp&nbsp&nbsp"+contain[i]+"</p>");
         	}
         }); 
 	</script>

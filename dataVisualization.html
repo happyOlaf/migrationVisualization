@@ -6,6 +6,8 @@
 	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 	<script src="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script>
 	<link href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css" rel="stylesheet" />
+	<link href="https://api.mapbox.com/styles/v1/sunhhh/ckdb7t8901x4k1ips0gr58zi8" />
+	
 	<script type="text/javascript" src="assets/mapboxgl/include-web.js"></script>
 	<script src="https://cdn.bootcdn.net/ajax/libs/echarts/4.7.0/echarts.min.js"></script>
 	<link rel="stylesheet" href="assets/css/style.css"> <!-- Resource style -->
@@ -61,13 +63,13 @@
 
         .sidbear-toggle {
             position: absolute;
-            width: 1em;
-            height: 1em;
+            width: 1.3em;
+            height: 1.4em;
             overflow: visible;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            <!-- display: flex; -->
+            <!-- justify-content: center; -->
+            <!-- align-items: center;
+            text-align: center; -->
         }
 
         .sidbear-toggle.left {
@@ -95,7 +97,7 @@
             border-radius: 10px;
             box-shadow: 0 0 50px -25px black;
             border: 1px solid;
-            background-color: rgba(0,0,0,0.7);
+            background-color: rgba(0,0,0,0.8);
         }
         .left.collapsed {
             transform: translateX(-355px);
@@ -147,8 +149,8 @@
             position:absolute;
             width:320px;
             height:30px;
-            margin-top: 10px;
-            font-size: 20px;
+            margin-top: 20px;
+            font-size: 15px;
             color:  #FFD700;
             text-align: center;
             font-weight: bold;
@@ -156,8 +158,8 @@
         #Rightcharts1{
             position:absolute;
             width:340px;
-            height:520px;
-            margin-top: 50px;
+            height:540px;
+            margin-top: 40px;
         }
 </style>
 </head>
@@ -169,7 +171,7 @@
     <div style="float: left;">
         <label class="switch-btn circle-style">
             <input class="checked-switch" type="checkbox" />
-            <span class="text-switch" data-yes="Imi" data-no="Emi"></span> 
+            <span class="text-switch" data-yes="Imm" data-no="Emi"></span> 
             <span class="toggle-btn"></span> 
         </label>
     </div>
@@ -210,8 +212,12 @@
     <div id="right" class="sidebar flex-center right collapsed">
         <div class="sidebar-content rounded-rect flex-center">
             <div class="sidbear-toggle rounded-rect right"
-                onclick="toggleSidebar('right')">
-                &laquo;
+                onclick="toggleSidebar('right')">&laquo;
+                
+				<!-- &nbsp;&lt;&nbsp; -->
+				<!-- &lt;&lt; -->
+				<!-- &lArr; -->
+				<!-- &lArr; -->
             </div>
             <!-- <div id="righthead">1990 年 中国 有 185 个移民目的国</div> -->
 			<div id="righthead">Ranking of Immigrants by Country in 1990</div>
@@ -400,13 +406,18 @@
 </script>
 <script type="text/javascript">
 	mapboxgl.accessToken = 'pk.eyJ1Ijoic3VuaGhoIiwiYSI6ImNrOHYydDcxaDA2Y2QzZ3ByNHhxaHRwNnUifQ.EY5JFYPs7LPFTtv0kmBKvw';
+	                        
     var map = new mapboxgl.Map({
         container: 'map',
         zoom: 2,
 		
         center: [0, 20],
-        style: 'mapbox://styles/mapbox/dark-v10'
-		//style: 'mapbox://styles/sunhhh/ckb9geor40z7m1io3jpllvwrn'
+        //style: 'mapbox://styles/mapbox/dark-v10'
+		style: 'mapbox://styles/sunhhh/ckdb7t8901x4k1ips0gr58zi8'
+		
+		//mapbox://styles/sunhhh/ckdb78mif1wk41io6w0zqsuvw
+		
+		
     });
 
     map.addControl(new mapboxgl.NavigationControl());
@@ -1000,18 +1011,18 @@
                     moveOnMouseMove:true,
                     moveOnMouseWheel:true,
                 },
-                {
+                /*{
                     type: 'slider',
                     yAxisIndex: 0,
                     filterMode: 'empty',
                     zoomLock:true,
-                },
+                },*/
             ],
           grid: {
             borderWidth: 0,
             top: '8%',
             left: '8%',
-            right: '8%',
+            right: '0%',
             bottom: '3%'
           },
           color: '#fff',
