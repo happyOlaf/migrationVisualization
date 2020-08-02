@@ -13,12 +13,6 @@
 	
 </head>
 <style>
-	    body {
-                background:url("assets/images/bg.png") no-repeat center center;
-                background-repeat: no-repeat;
-                background-attachment:fixed;
-                background-size: cover;
-            }
 		#container2 {
             position: absolute;
             top: 770px;
@@ -34,8 +28,9 @@
 		}
         #SelContainer{
             position: absolute;
-            top:720px;
+            top:750px;
             right: 1200px;
+			background-color:#003c5d;
         }
         #countrylist{
 			top:750px;
@@ -61,7 +56,7 @@
     </header>
     <div id="container" style="height:650px;top:20px;" ></div>
 	
-	<div id="container2"style="margin:0 auto;">
+	<div id="container2"style="margin:0 auto;background-color:#2c343c;">
 		<div id="chart"></div>
 	</div>
     <div id="SelContainer">
@@ -197,7 +192,7 @@
     var dom = document.getElementById("container");
     var myChart = echarts.init(dom);
     var option = {
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: '#2c343c',
 		title:{
 			text: 'The Relationship between Netmigration and GDP',								
 			left: 'center',
@@ -772,7 +767,7 @@
     initializeData();
     option = null;
     option = {
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: '#2c343c',
 		title:{
 			text: 'Netmigrationnumber in Different Countries',								
 			left: 'center',
