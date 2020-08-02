@@ -67,11 +67,8 @@
 		.sidbear-toggle {
             position: absolute;
             width: 1.3em;
-            height: 1.4em;
-            overflow: visible;
-            
-            justify-content: center;
-            align-items: center;
+            height: 1.6em;			
+            overflow: visible;           
             text-align: center;
         }
 
@@ -115,18 +112,28 @@
             height: 50px;
             margin-top: 60px;
         }
+		#lefthead1{
+            position:absolute;
+            width:320px;
+            height:30px;
+            margin-top: 10px;
+            font-size: 17px;
+            color: #FFD700;
+            text-align: center;
+            font-weight: bold;
+        }
         #leftcharts1{
             position: absolute;
-            margin-top: 10px;
+            margin-top: 33px;
             width: 320px;
-            height: 200px;
+            height: 220px;
         }
         #lefthead2{
             position:absolute;
             width:320px;
             height:30px;
-            margin-top: 230px;
-            font-size: 20px;
+            margin-top: 250px;
+            font-size: 17px;
             color: #FFD700;
             text-align: center;
             font-weight: bold;
@@ -142,7 +149,7 @@
             position:absolute;
             width:320px;
             height:30px;
-            margin-top: 10px;
+            margin-top: 15px;
             font-size: 20px;
             color:  #FFD700;
             text-align: center;
@@ -152,7 +159,7 @@
             position:absolute;
             width:340px;
             height:560px;
-            margin-top: 40px;
+            margin-top: 35px;
         }
 </style>
 
@@ -197,6 +204,7 @@
             <div id="leftArrow" class="sidbear-toggle rounded-rect left" onclick="toggleSidebar('left')">
                 &raquo;
             </div>
+			<div id="lefthead1"></div>
             <div id="leftcharts1">
             </div>
             <div id="lefthead2"></div>
@@ -207,9 +215,11 @@
     <div id="right" class="sidebar flex-center right collapsed">
         <div class="sidebar-content rounded-rect flex-center">
             <div class="sidbear-toggle rounded-rect right"
-                onclick="toggleSidebar('right')"><!-- &laquo; -->
-                
+                onclick="toggleSidebar('right')">
+				
 				&laquo;
+                
+				
             </div>
             <div id="righthead"></div>
             <div id="Rightcharts1">
@@ -902,6 +912,15 @@
     var Ytotal_out=[300000, 200000,10000,200000,500000,700000,600000];*/
     Drawleftecharts1(total_Out);
     function Drawleftecharts1(datas){
+		var lefthead1Text_in="Immigrants in different years";
+		var lefthead1Text_out="Emigrants in different years";
+        
+		if (status == "in") {
+             document.getElementById('lefthead1').innerHTML=lefthead1Text_in;
+        }
+        if (status == "out") {
+             document.getElementById('lefthead1').innerHTML=lefthead1Text_out;
+        }
         var leftcharts1 = echarts.init(document.getElementById('leftcharts1'));
         option = {
             grid: {
