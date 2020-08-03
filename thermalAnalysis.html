@@ -19,6 +19,12 @@
 	
 </head>
 <style>
+		body {
+            background:url("assets/images/bg.png") no-repeat center center;
+            background-repeat: no-repeat;
+            background-attachment:fixed;
+            background-size: cover;
+        }
 	.list-group-item{
 		position: relative;
 		display: block;
@@ -34,7 +40,7 @@
 	
 	
 </style>
-<body style="background-color: black;">  <!-- 背景颜色在19，20，21，22，36行 -->
+<body style="">  <!-- 背景颜色在19，20，21，22，36行 -->
         <header>
         <nav class="cd-stretchy-nav">
             <a class="cd-nav-trigger" href="#0">
@@ -52,17 +58,17 @@
             <span aria-hidden="true" class="stretchy-nav-bg"></span>
         </nav>
     </header>
-	<div id="main01" style="width: 1450px;height:750px;margin: 0 auto;background-color: black;"></div>
-	<div id="main02" style="width: 1450px;height:450px;margin: 10px auto;background-color: black;"></div>
-	<div style="position:absolute;top:1220px;right:2.5%;width: 1450px;height:400px;border-radius: 10px;background-color:  black;">
-		<div id="main03"style="float:left;width: 725px;height:400px;border-radius: 10px;background-color:  white;"></div>
-		<div id="main04"style="float:right;width: 725px;height:400px;border-radius: 10px;background-color:  white;"></div>
+	<div id="main01" style="width: 1450px;height:750px;margin: 0 auto;"></div>
+	<div id="main02" style="width: 1450px;height:450px;margin: 10px auto;"></div>
+	<div style="position:absolute;top:1220px;right:2.5%;width: 1450px;height:400px;">
+		<div id="main03"style="float:left;width: 725px;height:400px;border-radius: 10px;"></div>
+		<div id="main04"style="float:right;width: 725px;height:400px;border-radius: 10px;"></div>
 	</div>
 
        
 <!-- /. NAV SIDE  -->
 <div id="page-wrapper"style="position:absolute;top:1630px;margin: 0 auto;">
-    <div id="container" style= "width: 1450px;height: 700px;right:-2.2%;margin: 0 auto;background-color: black;" ></div>
+    <div id="container" style= "width: 1450px;height: 700px;right:-2.2%;margin: 0 auto;" ></div>
 
         <!-- 模态框（Modal） -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -112,6 +118,7 @@
 		var color2 = color1 + 10;
 		var color3 = color1 + 20;
         option = {
+        	backgroundColor: 'rgba(0,0,0,0.5)',
             title:{
             	text:'Migration Wordcloud Display',
 				left: 50,
@@ -316,10 +323,11 @@
 		var myChart3 = echarts.init(document.getElementById('main03')); //热门词
 		var myChart4 = echarts.init(document.getElementById('main04')); //飙升词
 		            option = {//地图
+		            	backgroundColor: 'rgba(0,0,0,0.5)',
 		                baseOption: {
 		                    timeline: {
 		                        axisType: 'category',
-		                        <!-- orient: 'vertical', -->
+		                        
 		                        // realtime: false,
 		                        // loop: false,
 		                        autoPlay: true,
@@ -359,7 +367,7 @@
 		                            formatter: years
 		                        },        
 		                    },
-
+		                    backgroundColor: 'rgba(0,0,0,0.5)',
 		                    tooltip: {
 		                        show: true,
 		                        trigger: 'item'
@@ -553,6 +561,7 @@
 
 			            });
 						var option2 = {
+									backgroundColor: 'rgba(0,0,0,0.5)',
 						            title:{
 						                text: curyear+' Global total heat of migration',		
 						                textStyle:{
@@ -680,7 +689,7 @@
 				            }
 
 				            option3 = {
-							    backgroundColor:' black',
+							    backgroundColor: 'rgba(0,0,0,0.5)',
 							    title:{
 							        text:"Related queries —— Popular",
 							        left:'center',
@@ -724,7 +733,7 @@
 							};
 
 							option4 = {
-							    backgroundColor:'black',
+							    backgroundColor: 'rgba(0,0,0,0.5)',
 							    title:{
 							        text:"Related queries —— Increased search volume",
 							        left:'center',
