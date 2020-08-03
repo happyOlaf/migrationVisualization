@@ -18,7 +18,22 @@
     <script src="assets/js/main.js"></script> <!-- Resource jQuery -->
 	
 </head>
-
+<style>
+	.list-group-item{
+		position: relative;
+		display: block;
+		padding: 10px 15px;
+		margin-bottom: -1px;
+		background-color: #393535;
+		border: 1px solid #6c6a6a;
+	
+	}
+	a.list-group-item, button.list-group-item {
+		color: #f2eeee;
+	}
+	
+	
+</style>
 <body style="background-color: black;">  <!-- 背景颜色在19，20，21，22，36行 -->
         <header>
         <nav class="cd-stretchy-nav">
@@ -47,12 +62,12 @@
        
 <!-- /. NAV SIDE  -->
 <div id="page-wrapper"style="position:absolute;top:1630px;margin: 0 auto;">
-    <div id="container" style= "width: 1450px;height: 600px;right:-2.2%;margin: 0 auto;background-color: black;" ></div>
+    <div id="container" style= "width: 1450px;height: 700px;right:-2.2%;margin: 0 auto;background-color: black;" ></div>
 
         <!-- 模态框（Modal） -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog" >
-			<div class="modal-content" style="width: 150%;margin:0 auto; background-color: rgba(255,255,255,0.7);">
+			<div class="modal-content" style="width: 100%;margin:0 auto; background-color: rgba(255,255,255,0.2);">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h4 class="modal-title" id="myModalLabel" style="color:#fff700;"></h4>
@@ -93,12 +108,16 @@
 
         });
         var mychart = echarts.init(dom);
+		var color1 = Math.random() * 255;
+		var color2 = color1 + 10;
+		var color3 = color1 + 20;
         option = {
             title:{
             	text:'Migration Wordcloud Display',
+				left: 50,
             	textStyle: {
                     fontWeight: 'bold',
-                    fontSize: 20,
+                    fontSize: 25,
                     color:"#DCDCDC"
                 }
             },
@@ -109,21 +128,21 @@
                 name: 'Migration wordCloud',
                 type: 'wordCloud',
                 maskImage:img,
-                size: ['80%', '80%'],
-                sizeRange: [5, 45],
+                size: ['100%', '100%'],
+                sizeRange: [10, 35],//5,45
                 textRotation : [0, 45, 90, -45],
                 textPadding: 0,
-                autoSize: {
-                    enable: true,
-                    minSize: 14
-                },
+                //autoSize: {
+                //    enable: true,
+                //    minSize: 14
+                //},
                 textStyle:{
                     normal: {
                     color: function(){
                         return 'rgb(' + [
-                        Math.round(Math.random() * 250),
-                        Math.round(Math.random() * 250),
-                        Math.round(Math.random() * 250)
+                        Math.round(50 + Math.random() * 200),
+                        Math.round(50 + Math.random() * 200),
+                        Math.round(50 + Math.random() * 200)
                     ].join(',') + ')'
                 }
                 },
@@ -199,7 +218,7 @@
         mychart.on('click', function(e){  
         	console.log(e);//此处写点击事件内容
             $('#myModal').modal('show')
-            document.getElementById('myModalLabel').innerHTML = '与"'+e.name+'"有关的新闻';
+            document.getElementById('myModalLabel').innerHTML = 'News about "'+e.name+'"';
             var $table      = $('.table');
 			var $pagination = $('.pagination');
 			var TotalLen = gettotal(e.name);
@@ -300,7 +319,7 @@
 		                baseOption: {
 		                    timeline: {
 		                        axisType: 'category',
-		                        
+		                        <!-- orient: 'vertical', -->
 		                        // realtime: false,
 		                        // loop: false,
 		                        autoPlay: true,
@@ -349,34 +368,34 @@
 		                        type: 'piecewise',
 		                        pieces: [
 		                            {
-		                                min: 81,
-		                                max: 100,
-		                                color: '#EE2C2C'
-		                            },
-		                            {
 		                                min: 61,
-		                                max: 80,
-		                                color: '#EE7600'
-		                            },
-		                            {
-		                                min: 41,
-		                                max: 60,
-		                                color: '#FF8C00'
+		                                max: 100,
+		                                color: '#135ed9'<!-- #EE2C2C -->
 		                            },
 		                            {
 		                                min: 21,
-		                                max: 40,
-		                                color: '#FFD700'
+		                                max: 60,
+		                                color: '#3475e2'<!-- #EE7600 -->
 		                            },
 		                            {
-		                                min: 1,
+		                                min: 11,
 		                                max: 20,
-		                                color: '#FFEC8B'
+		                                color: '#4f88e8'<!-- #FF8C00 -->
 		                            },
 		                            {
-		                                value: 0,
-		                                color: 'white'
-		                            }
+		                                min: 6,
+		                                max: 10,
+		                                color: '#6ea1f6'<!-- #FFD700 -->
+		                            },
+		                            {
+		                                min: 0,
+		                                max: 5,
+		                                color: '#91b8f8'<!-- #FFEC8B -->
+		                            },
+		                            //{
+		                            //    value: 0,
+		                            //    color: 'white'
+		                            //}
 
 		                        ],
 		                        orient: 'vertical',
@@ -455,7 +474,7 @@
 		                        },
 		                        itemStyle: {
 		                            emphasis: {
-		                                areaColor: '#FFD700'
+		                                areaColor: '#d7ddf0'<!-- #FFD700 -->
 		                            }
 		                        }
 		                    },
@@ -817,19 +836,19 @@
 		                                    var colorList = [{
 		                                            colorStops: [{
 		                                                offset: 0,
-		                                                color: '#FF0000' // 0% 处的颜色
+		                                                color: '#135ed9' // 0% 处的颜色#FF0000
 		                                            }, {
 		                                                offset: 1,
-		                                                color: '#990000' // 100% 处的颜色
+		                                                color: '#4f88e8' // 100% 处的颜色#990000
 		                                            }]
 		                                        },
 		                                        {
 		                                            colorStops: [{
 		                                                offset: 0,
-		                                                color: '#FF8C00' // 0% 处的颜色
+		                                                color: '#91b8f8' // 0% 处的颜色#FF8C00
 		                                            }, {
 		                                                offset: 1,
-		                                                color: '#FF4500' // 100% 处的颜色
+		                                                color: '#6ea1f6' // 100% 处的颜色#FF4500
 		                                            }]
 		                                        }
 		                                    ];
