@@ -3,7 +3,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-> International migration visualization system 国际移民数据可视化与分析平台
+> International Migration Visualization System 国际移民数据可视化与分析平台
 
 ![Overview](https://github.com/happyOlaf/migrationVisualization/blob/cjs/content/0.png)
 
