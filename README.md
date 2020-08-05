@@ -35,7 +35,7 @@
 
 ![Policy](https://github.com/happyOlaf/migrationVisualization/blob/cjs/content/7.gif)
 
-## Develop Environment
+## Development Environment
 > IntelliJ IDEA  
 > MySql 5.7
 
